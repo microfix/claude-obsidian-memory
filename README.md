@@ -91,6 +91,104 @@ At every session start, Claude Code:
 
 ---
 
+## Prerequisites
+
+You need **Claude Code** installed before using this system. Obsidian is handled by the install script, but Claude Code must be set up first.
+
+### Claude Code Account
+
+Claude Code requires a **paid plan** — the free Claude.ai plan does not include Claude Code access:
+- Claude Pro, Max, Team, or Enterprise subscription
+- Or an Anthropic Console account with API credits
+- Or a third-party provider (Amazon Bedrock, Google Vertex AI)
+
+### macOS
+
+**Requirements:** macOS with 4 GB+ RAM. That's it.
+
+```bash
+# Install Claude Code
+curl -fsSL https://claude.ai/install.sh | bash
+
+# Verify installation
+claude --version
+```
+
+Or via Homebrew:
+```bash
+brew install claude-code
+```
+
+### Windows
+
+Windows has two options: **Native** or **WSL** (Windows Subsystem for Linux).
+
+#### Option 1: Native Windows (easiest)
+
+**Requirements:**
+- Windows 10/11, 4 GB+ RAM
+- **[Git for Windows](https://git-scm.com/downloads/win)** — required, install this first
+
+Install Claude Code from **PowerShell**:
+```powershell
+irm https://claude.ai/install.ps1 | iex
+```
+
+Or from **CMD** (not PowerShell):
+```bat
+curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+```
+
+> **Tip:** Your prompt shows `PS C:\` in PowerShell and `C:\` in CMD. Use the matching command.
+
+After installation, Claude Code uses Git Bash internally to execute commands. If it can't find Git Bash, add this to your settings:
+```json
+{
+  "env": {
+    "CLAUDE_CODE_GIT_BASH_PATH": "C:\\Program Files\\Git\\bin\\bash.exe"
+  }
+}
+```
+
+#### Option 2: WSL (Linux toolchains)
+
+**Requirements:**
+- WSL 2 enabled (supports sandboxing)
+- A Linux distribution installed (e.g., Ubuntu from Microsoft Store)
+
+Install from inside your WSL terminal:
+```bash
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+### Linux
+
+**Requirements:** 4 GB+ RAM, x64 or ARM64.
+
+```bash
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+For **Alpine/musl-based** distros, install extra dependencies first:
+```bash
+apk add libgcc libstdc++ ripgrep
+```
+
+### Verify Installation
+
+On all platforms:
+```bash
+claude --version
+claude doctor    # Detailed health check
+```
+
+Then start Claude Code and follow the browser prompt to log in:
+```bash
+claude
+```
+
+---
+
 ## Installation
 
 ### Just Tell Claude Code
