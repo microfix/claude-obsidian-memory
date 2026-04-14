@@ -93,13 +93,15 @@ At every session start, Claude Code:
 
 ## Installation
 
-### Prerequisites
+### Just Tell Claude Code
 
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed and authenticated
-- [Obsidian](https://obsidian.md/) installed (free)
-- An existing Obsidian vault (or create a new one)
+If you already have Claude Code running, just say:
 
-### Quick Install
+> Install the memory system from github.com/microfix/claude-obsidian-memory
+
+Claude Code will clone the repo and run the installer. It handles everything — including installing Obsidian if you don't have it.
+
+### Quick Install (Terminal)
 
 ```bash
 git clone https://github.com/microfix/claude-obsidian-memory.git
@@ -107,13 +109,24 @@ cd claude-obsidian-memory
 ./install.sh
 ```
 
-The install script will:
-1. Ask for your Obsidian vault path
-2. Copy the `AI/` memory structure into your vault
-3. Copy skills into your vault under `Claude Code/skills/`
-4. Create symlinks from `~/.claude/skills/` to your vault
-5. Install commands to `~/.claude/commands/`
-6. Generate a `CLAUDE.md` with your vault path
+### Non-Interactive Install
+
+For scripting or when Claude Code runs it for you:
+
+```bash
+./install.sh --vault ~/Documents/MyVault --yes
+```
+
+### What the Installer Does
+
+1. **Installs Obsidian** if not found (via Homebrew on macOS, Snap/Flatpak on Linux)
+2. **Creates a vault** if the path doesn't exist (with proper `.obsidian` config)
+3. Copies the `AI/` memory structure into your vault
+4. Copies skills into your vault under `Claude Code/skills/`
+5. Creates symlinks from `~/.claude/skills/` to your vault
+6. Installs `/compile` and `/audit` commands to `~/.claude/commands/`
+7. Generates `~/.claude/CLAUDE.md` with your vault path
+8. Optionally installs `defuddle` CLI for web content extraction
 
 ### Manual Install
 
