@@ -15,6 +15,8 @@ Claude Code is powerful but forgetful. Every new session starts from zero — yo
 - **Persistent memory** — decisions, context, and progress survive across sessions
 - **Structured knowledge** — atomic notes with wikilinks, not one giant file
 - **Auto-bootstrap** — Claude reads its memory silently at session start
+- **Applied learning** — when you correct Claude, the lesson is saved and never repeated
+- **Decision graph** — every significant decision becomes a linked node, so good routes are found again instead of re-discovered
 - **Skills system** — reusable prompt modules for common tasks
 - **Maintenance commands** — `/compile` to process raw notes, `/audit` to find issues
 - **Daily logs** — automatic session logging for full history
@@ -34,6 +36,11 @@ Claude Code is powerful but forgetful. Every new session starts from zero — yo
 │  ├── SKILLS.md         ← Skill inventory         │
 │  ├── tools/            ← Setup & service docs     │
 │  │   └── _index.md     ← Tools registry          │
+│  ├── applied-learning/ ← Lessons from corrections │
+│  │   ├── ALWAYS.md     ← Read every session       │
+│  │   └── <topic>.md    ← Loaded contextually      │
+│  ├── decisions/        ← Decision graph (nodes)   │
+│  │   └── _index.md     ← Convention & node list   │
 │  ├── memory/           ← Daily logs (YYYY-MM-DD) │
 │  └── raw/              ← Inbox for loose notes    │
 │                                                 │
@@ -58,9 +65,10 @@ Claude Code is powerful but forgetful. Every new session starts from zero — yo
 At every session start, Claude Code:
 1. Reads `AI/_index.md` (master index)
 2. Reads `AI/tools/_index.md` (your setup)
-3. Reads the 2-3 most recent `memory/` files
-4. Loads relevant context based on what you're working on
-5. Answers — without you explaining anything
+3. Reads `AI/applied-learning/ALWAYS.md` (your standing corrections)
+4. Reads the 2-3 most recent `memory/` files
+5. Loads relevant context based on what you're working on
+6. Answers — without you explaining anything
 
 ## What's Included
 
@@ -351,6 +359,49 @@ Claude logs automatically, but you can also:
 
 ---
 
+## Applied Learning — Claude Stops Repeating Mistakes
+
+Every time you correct Claude ("no, don't do it like that", "I told you already"), the lesson is captured as one short imperative sentence — silently, without ceremony:
+
+- **Universal lessons** (apply to everything) go to `applied-learning/ALWAYS.md`, which Claude reads at every session start.
+- **Contextual lessons** (only relevant for git, or CSS, or your deploy flow) go to topic files that load only when the task matches — so they don't cost tokens in unrelated sessions.
+
+Example of what ends up in `ALWAYS.md`:
+
+```markdown
+## Process
+- Never declare a feature broken from indirect signs — verify the actual
+  data path or test the running flow before concluding.
+- Ask before destructive git operations.
+```
+
+Over months this becomes the difference between an assistant that resets to factory settings every session and one that actually works the way you've taught it to.
+
+## Decision Graph — Save the Routes That Worked
+
+Beyond raw memory, the system captures **decisions as a graph**. Every significant decision becomes a note (a **node**) in `AI/decisions/`, and wikilinks between notes are the **edges**. Obsidian's graph view then literally shows the chains: decision → context → outcome → next decision.
+
+Each node records:
+
+```markdown
+---
+tags: [decision]
+status: chosen | rejected | awaiting-outcome | confirmed-good | confirmed-bad
+---
+# Editorial minimal redesign of the landing page
+
+**Context:** Homepage needed to look premium. Two rounds of animation missed the mark.
+**Decision:** User picked "editorial minimal" from concrete visual previews.
+**Alternatives:** More animation (rejected — motion wasn't the problem), dark tech-luxury.
+**Outcome:** Nailed it. THE ROUTE: "make it prettier" = ask for VISUAL DIRECTION with previews first.
+
+Edges: [[AI/memory/2026-07-01|daily log]] · [[2026-07-02 Related decision]]
+```
+
+The lifecycle matters: a decision is created as `chosen` or `awaiting-outcome`, and **updated once the result is known**. Before making a new directional choice, Claude searches the graph first — `confirmed-good` routes get reused, `confirmed-bad` routes get avoided. That's the whole point: stop paying twice for the same discovery.
+
+---
+
 ## System Design
 
 ### Why Obsidian?
@@ -396,6 +447,13 @@ AI/
 │   ├── _index.md      # Registry of all tools/services
 │   ├── my-server.md   # Example: server documentation
 │   └── my-api.md      # Example: API credentials & usage
+├── applied-learning/
+│   ├── _index.md      # Overview + capture workflow
+│   ├── ALWAYS.md      # Universal lessons — read every session
+│   └── <topic>.md     # Contextual lessons — loaded when relevant
+├── decisions/
+│   ├── _index.md      # Convention + list of nodes
+│   └── YYYY-MM-DD *.md  # One node per significant decision
 ├── memory/
 │   ├── 2024-01-15.md  # Daily log
 │   ├── 2024-01-16.md  # Daily log
@@ -493,6 +551,35 @@ The vault is just files. Sync with any method:
 
 Skills and memory travel with the vault. `~/.claude/skills/` symlinks need to be recreated on each machine (run `install.sh` again).
 
+### Headless Server Sync (advanced)
+
+If Claude Code also runs on a headless server (agents, bots, cron jobs) and writes to a server-side copy of the vault, that copy needs a running Obsidian client for LiveSync to work. On a Linux server, run Obsidian headless under Xvfb as a systemd service so it survives reboots:
+
+```ini
+# /etc/systemd/system/obsidian-headless.service
+[Unit]
+Description=Headless Obsidian (LiveSync to CouchDB)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+User=youruser
+Environment=HOME=/home/youruser
+ExecStart=/usr/bin/xvfb-run -a /snap/bin/obsidian
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+sudo apt install xvfb && sudo snap install obsidian --classic
+sudo systemctl enable --now obsidian-headless
+```
+
+> **Warning — learned the hard way:** if the server-side Obsidian dies silently while agents keep writing to the vault files, those writes exist only locally. When sync comes back up, conflict resolution can pick the wrong side and discard content. Two defenses: (1) systemd's `Restart=on-failure` keeps the client alive; (2) health-check it — a quick `systemctl is-active obsidian-headless` in your monitoring, or check that files in the server vault have fresh mtimes.
+
 ### Multi-Project
 
 One vault handles multiple projects. Create project-specific notes under `AI/tools/` or dedicated subfolders:
@@ -515,6 +602,8 @@ Cross-project knowledge connects through `[[wikilinks]]`.
 |---------|-------------|-------------------|--------------------------|
 | Persistent memory | Yes (structured vault) | No | Yes (basic) |
 | Auto-bootstrap | Silent, at session start | Manual | Requires `/resume` command |
+| Self-improving | Correction capture (applied-learning) | No | No |
+| Decision graph | Linked nodes with outcome lifecycle | No | No |
 | Skills system | Full (builder + symlinks) | No | No |
 | Knowledge graph | Wikilinks + Obsidian graph | No | Basic |
 | Maintenance commands | `/compile` + `/audit` | No | No |
