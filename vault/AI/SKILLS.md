@@ -16,6 +16,8 @@ All Claude Code skills installed in this system. Skills live in the vault under 
 | `obsidian-markdown` | Write correct Obsidian Flavored Markdown | Working with `.md` files, wikilinks, callouts, embeds |
 | `obsidian-bases` | Create `.base` files with views, filters, formulas | Working with `.base` files, database views |
 | `obsidian-cli` | Interact with running Obsidian via CLI | Vault operations, note management, plugin dev |
+| `json-canvas` | Create and edit `.canvas` files (mind maps, flowcharts) | Working with `.canvas` files, visual canvases |
+| `anydoc` | Convert documents (PDF, Word, Excel, PowerPoint...) to markdown | Any task needing the content of a binary document |
 | `defuddle` | Extract clean markdown from web pages | Reading URLs, web articles, documentation |
 
 ## Adding Skills

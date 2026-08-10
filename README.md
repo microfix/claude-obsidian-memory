@@ -49,6 +49,8 @@ Claude Code is powerful but forgetful. Every new session starts from zero — yo
 │  ├── obsidian-markdown/                          │
 │  ├── obsidian-bases/                             │
 │  ├── obsidian-cli/                               │
+│  ├── json-canvas/                                │
+│  ├── anydoc/                                     │
 │  └── defuddle/                                   │
 └───────────────────┬─────────────────────────────┘
                     │
@@ -76,9 +78,10 @@ At every session start, Claude Code:
 |-----------|-------------|
 | **Vault template** | Pre-structured Obsidian vault with AI memory architecture |
 | **CLAUDE.md** | Global instructions that teach Claude how to use the vault |
-| **5 skills** | Skill builder, Obsidian Markdown, Obsidian Bases, Obsidian CLI, Defuddle |
+| **7 skills** | Skill builder, Obsidian Markdown, Obsidian Bases, Obsidian CLI, JSON Canvas, anydoc, Defuddle |
 | **2 commands** | `/compile` (process raw notes) and `/audit` (find issues) |
 | **Install script** | One command to set up everything |
+| **AGENT-SETUP.md** | Instructions an AI agent can follow to install everything itself |
 
 ### Skills Included
 
@@ -88,6 +91,8 @@ At every session start, Claude Code:
 | `obsidian-markdown` | Write correct Obsidian Flavored Markdown (wikilinks, callouts, embeds, properties) |
 | `obsidian-bases` | Create `.base` files (database-like views with filters and formulas) |
 | `obsidian-cli` | Interact with running Obsidian via CLI (read, create, search, manage notes) |
+| `json-canvas` | Create and edit `.canvas` files — mind maps, flowcharts, visual boards |
+| `anydoc` | Convert documents (PDF, Word, Excel, PowerPoint, ODF, RTF, EPUB, CSV) to clean markdown |
 | `defuddle` | Extract clean markdown from web pages (saves tokens vs raw HTML) |
 
 ### Commands Included
@@ -199,13 +204,13 @@ claude
 
 ## Installation
 
-### Just Tell Claude Code
+### Just Tell Claude Code (recommended)
 
-If you already have Claude Code running, just say:
+If you already have Claude Code running, paste this — replacing the folder with where you want your vault:
 
-> Install the memory system from github.com/microfix/claude-obsidian-memory
+> Set up the memory system from github.com/microfix/claude-obsidian-memory using folder `~/Documents/MyVault`. Follow AGENT-SETUP.md in the repo.
 
-Claude Code will clone the repo and run the installer. It handles everything — including installing Obsidian if you don't have it.
+Claude Code clones the repo and follows [AGENT-SETUP.md](AGENT-SETUP.md) — a step-by-step instruction file written for AI agents. It creates the full file structure, symlinks the skills, and writes `~/.claude/CLAUDE.md` pointing at your vault. If it can't write CLAUDE.md (sandboxed environment), it tells you exactly where the file goes and what to put in it.
 
 ### Quick Install (Terminal)
 
@@ -232,7 +237,7 @@ For scripting or when Claude Code runs it for you:
 5. Creates symlinks from `~/.claude/skills/` to your vault
 6. Installs `/compile` and `/audit` commands to `~/.claude/commands/`
 7. Generates `~/.claude/CLAUDE.md` with your vault path
-8. Optionally installs `defuddle` CLI for web content extraction
+8. Optionally installs the `anydoc` CLI (document conversion) and `defuddle` CLI (web content extraction)
 
 ### Manual Install
 
@@ -247,7 +252,7 @@ cp -r vault/Claude\ Code/ "/path/to/your/vault/Claude Code/"
 **2. Create skill symlinks:**
 ```bash
 mkdir -p ~/.claude/skills
-for skill in skill-builder obsidian-markdown obsidian-bases obsidian-cli defuddle; do
+for skill in skill-builder obsidian-markdown obsidian-bases obsidian-cli json-canvas anydoc defuddle; do
   ln -sf "/path/to/your/vault/Claude Code/skills/$skill" ~/.claude/skills/$skill
 done
 ```

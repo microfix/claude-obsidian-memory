@@ -46,3 +46,10 @@ All memory lives in the Obsidian vault — shared across all sessions.
 - **Symlinks:** `~/.claude/skills/` → vault (create new skills in vault, not in `.claude/`)
 - **Overview:** `<VAULT_PATH>/AI/SKILLS.md`
 - **Create new:** Use `/skill-builder`
+
+## Documents (PDF, Word, Excel, PowerPoint, etc.)
+When a document needs to be read or analyzed, ALWAYS use the **anydoc skill** first. Never read the binary file directly, never spend vision tokens on pages that have a text layer.
+- **Formats:** `.pdf`, `.doc(x/m)`, `.xls(x/m/b)`, `.ppt(x/m)`, `.odt`, `.ods`, `.odp`, `.rtf`, `.epub`, `.csv`
+- **Command:** `anydoc <file> -o out.md` (large documents to file, read in chunks)
+- **If both .docx and .pdf exist:** use the `.docx`. PDF guesses layout and loses structure.
+- **Only exception:** scanned PDF without a text layer (anydoc replies `OCR is required`) → Read tool with `pages` parameter

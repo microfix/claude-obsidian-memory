@@ -221,7 +221,7 @@ echo -e "${YELLOW}Step 3: Creating skill symlinks${NC}"
 
 mkdir -p ~/.claude/skills
 
-SKILLS=("skill-builder" "obsidian-markdown" "obsidian-bases" "obsidian-cli" "defuddle")
+SKILLS=("skill-builder" "obsidian-markdown" "obsidian-bases" "obsidian-cli" "json-canvas" "anydoc" "defuddle")
 
 for skill in "${SKILLS[@]}"; do
     SOURCE="$VAULT_PATH/Claude Code/skills/$skill"
@@ -278,6 +278,21 @@ echo ""
 # Step 6: Install Defuddle CLI (optional)
 # ──────────────────────────────────────────────
 echo -e "${YELLOW}Step 6: Optional dependencies${NC}"
+
+if command -v anydoc &>/dev/null; then
+    echo -e "${GREEN}✓ anydoc CLI already installed${NC}"
+else
+    if command -v npm &>/dev/null; then
+        echo "anydoc converts documents (PDF, Word, Excel, PowerPoint...) to markdown (used by the anydoc skill)."
+        if confirm "Install anydoc globally via npm?"; then
+            npm install -g @firecrawl/anydoc 2>/dev/null && echo -e "${GREEN}✓ anydoc installed${NC}" || echo -e "${YELLOW}  anydoc install failed (non-critical). Install manually: npm install -g @firecrawl/anydoc${NC}"
+        else
+            echo "  Skipped. Install later: npm install -g @firecrawl/anydoc"
+        fi
+    else
+        echo "  npm not found. anydoc skill requires: npm install -g @firecrawl/anydoc"
+    fi
+fi
 
 if command -v defuddle &>/dev/null; then
     echo -e "${GREEN}✓ Defuddle CLI already installed${NC}"

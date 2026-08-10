@@ -9,11 +9,12 @@ Create and edit valid Obsidian Flavored Markdown. Obsidian extends CommonMark an
 
 ## Workflow: Creating an Obsidian Note
 
-1. **Add frontmatter** with properties (title, tags, aliases) at the top of the file.
+1. **Add frontmatter** with properties (title, tags, aliases) at the top of the file. See [PROPERTIES.md](references/PROPERTIES.md) for all property types.
 2. **Write content** using standard Markdown for structure, plus Obsidian-specific syntax below.
 3. **Link related notes** using wikilinks (`[[Note]]`) for internal vault connections, or standard Markdown links for external URLs.
-4. **Embed content** from other notes, images, or PDFs using the `![[embed]]` syntax.
-5. **Add callouts** for highlighted information using `> [!type]` syntax.
+4. **Embed content** from other notes, images, or PDFs using the `![[embed]]` syntax. See [EMBEDS.md](references/EMBEDS.md) for all embed types.
+5. **Add callouts** for highlighted information using `> [!type]` syntax. See [CALLOUTS.md](references/CALLOUTS.md) for all callout types.
+6. **Verify** the note renders correctly in Obsidian's reading view.
 
 > When choosing between wikilinks and Markdown links: use `[[wikilinks]]` for notes within the vault (Obsidian tracks renames automatically) and `[text](url)` for external URLs only.
 
@@ -33,6 +34,14 @@ Define a block ID by appending `^block-id` to any paragraph:
 This paragraph can be linked to. ^my-block-id
 ```
 
+For lists and quotes, place the block ID on a separate line after the block:
+
+```markdown
+> A quote block
+
+^quote-id
+```
+
 ## Embeds
 
 Prefix any wikilink with `!` to embed its content inline:
@@ -44,6 +53,8 @@ Prefix any wikilink with `!` to embed its content inline:
 ![[image.png|300]]                     Embed image with width
 ![[document.pdf#page=3]]               Embed PDF page
 ```
+
+See [EMBEDS.md](references/EMBEDS.md) for audio, video, search embeds, and external images.
 
 ## Callouts
 
@@ -59,6 +70,8 @@ Prefix any wikilink with `!` to embed its content inline:
 ```
 
 Common types: `note`, `tip`, `warning`, `info`, `example`, `quote`, `bug`, `danger`, `success`, `failure`, `question`, `abstract`, `todo`.
+
+See [CALLOUTS.md](references/CALLOUTS.md) for the full list with aliases, nesting, and custom CSS callouts.
 
 ## Properties (Frontmatter)
 
@@ -78,6 +91,8 @@ cssclasses:
 
 Default properties: `tags` (searchable labels), `aliases` (alternative note names for link suggestions), `cssclasses` (CSS classes for styling).
 
+See [PROPERTIES.md](references/PROPERTIES.md) for all property types, tag syntax rules, and advanced usage.
+
 ## Tags
 
 ```markdown
@@ -85,7 +100,7 @@ Default properties: `tags` (searchable labels), `aliases` (alternative note name
 #nested/tag             Nested tag with hierarchy
 ```
 
-Tags can contain letters, numbers (not first character), underscores, hyphens, and forward slashes.
+Tags can contain letters, numbers (not first character), underscores, hyphens, and forward slashes. Tags can also be defined in frontmatter under the `tags` property.
 
 ## Comments
 
