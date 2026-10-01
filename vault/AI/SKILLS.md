@@ -24,6 +24,7 @@ Tick what the interview installed. Origin in brackets: **A** = Anthropic, **O** 
 | `json-canvas` | O | Create and edit `.canvas` files (mind maps, flowcharts) | Working with `.canvas` files, visual canvases |
 | `gdpr-check` | H | GDPR audit of software and data flows | Personal data, cookies, tracking, consent, login |
 | `icm-architect` | H | Turn a process or team knowledge into an agent-walkable folder structure | "organize this for agents", repeated multi-step flows |
+| `vault-organizer` | H | Sort an existing archive per company into an Obsidian vault, with indexes, links, undo | "organize", "index", "clean up" an archive; several companies in one folder |
 | `docx` `xlsx` `pptx` `pdf` | A | Create and edit Office files and PDFs | Word, Excel, PowerPoint, PDF as input or output |
 | `skill-creator` `frontend-design` | A | Build and test skills; distinctive web UI | New skill; new web UI |
 

@@ -51,13 +51,18 @@ The installer is idempotent. It only adds `AI/` and `Claude Code/` to the folder
 | C plain folder | `./install.sh --vault "<VAULT_PATH>" --yes --no-obsidian` |
 | D Microsoft 365, E Google Drive | `./install.sh --vault "<VAULT_PATH>" --yes --skills-mode copy` (add `--no-obsidian` if they don't want Obsidian) |
 
-Extra skills from the compliance and structure packs: append `--skills gdpr-check,icm-architect` (only the ones chosen).
+Extra skills from the compliance and structure packs: append `--skills gdpr-check,icm-architect` (only the ones chosen). **Organize level 1 or 2: append `--organized`** (installs `vault-organizer`, adds the single-source-of-truth block to CLAUDE.md, and with level 2 keep Obsidian on, i.e. no `--no-obsidian`).
 
 If the installer fails (unsupported OS, no shell, permissions), do the manual install in Step 4b.
 
-## Step 3: Existing material (modes B-E, when files already exist)
+## Step 3: Existing material (when files already exist)
 
-Do the **orientation pass** from [docs/STORAGE-MODES.md](docs/STORAGE-MODES.md): read-only, list top-level folders, count and sample, write the "Existing material" section in `AI/_index.md`. Do not move, rename, reformat or delete anything. Skip folders the user marked private.
+Depends on `organize_level` from the interview:
+
+- **Level 0:** the read-only orientation pass from [docs/STORAGE-MODES.md](docs/STORAGE-MODES.md). Nothing is moved.
+- **Level 1 or 2:** hand over to the `vault-organizer` skill (installed with `--organized`). It runs: backup → inventory → company mapping → **plan the user approves** → move (level 2) → frontmatter → index files → Obsidian setup → verification → update the user's CLAUDE.md so the vault is the single source of truth. Everything is journaled and undoable. Follow its `SKILL.md` phase by phase and stop at every ✋.
+
+Never move, rename or delete anything outside these approved phases.
 
 ## Step 4: Anthropic's own skills and connectors (if the packs call for them)
 

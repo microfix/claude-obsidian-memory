@@ -46,6 +46,15 @@ Only when something exists.
 "Should I create a new, separate memory area next to your existing files, or work inside your existing structure?"
 Recommend: **new `AI/` folder next to existing files; I never move, rename or delete what you already have.** That is the default and the safe choice. Only deviate if they insist.
 
+### 5b. Organize what exists?
+Only when files already exist (answer to 3 was not "nothing").
+"Should I just add my memory next to your files, or also organize your files so Claude (and Obsidian) can find everything easily?"
+- **Level 0: only add memory.** Nothing of yours is touched.
+- **Level 1: index and tag.** Index files, links and frontmatter added, current folders stay where they are.
+- **Level 2: full organization.** Files are sorted per company into one structure, moved, indexed and linked. Needs a plan you approve first, a backup, and it is undoable (journal). Recommend this when **several companies share one archive** or the user says the archive is messy.
+
+If level 1 or 2: ask "Which companies does the archive cover?" (exact names) and "Which folders are sensitive (HR, salary, contracts, personal data)?". Install the `vault-organizer` skill and hand over to it after the install (see AGENT-SETUP Step 3). Level 2 implies Obsidian rules for all notes, so the Obsidian skills are installed even if Obsidian is not yet used, and the user is told how to open the folder in Obsidian.
+
 ### 6. Obsidian: yes, no, or not sure?
 "Do you want to use Obsidian as the app for reading and browsing the notes?"
 - **Yes, I already use it**: mode B (existing vault) or A.
@@ -83,6 +92,7 @@ Derive from question 2, then confirm: "Based on what you told me, I suggest thes
 | Gmail, Drive, Docs (Google) | **Google** | claude.ai Gmail + Google Drive connectors |
 | Customers, personal data, EU/Denmark | **Compliance** | `gdpr-check` (Danish), `memory-guard` strict |
 | Processes, team knowledge, "organize our company for AI" | **Structure** | `icm-architect` |
+| Existing files to sort, several companies in one archive | **Organize** | `vault-organizer` |
 | Writes code | **Code** | built-in `/code-review`, `/simplify`, `/security-review`, plus `frontend-design` from Anthropic's example skills if they build web UIs |
 | Wants to build their own automations | **Builder** | `skill-builder` (core), Anthropic `skill-creator` |
 
@@ -98,7 +108,8 @@ Obsidian:          install / already installed / not used
 Skills:            <list>
 Shared with:       only you | <n> colleagues
 Sensitive data:    none | some | yes
-I will NOT:        move, rename or delete any existing file
+Organize level:    0 | 1 | 2   (companies: <names>)
+I will NOT:        delete any file. Files are only moved at level 2, after you approve the plan, with a backup and an undo journal
 ```
 
 Ask: "Shall I go ahead?" Only on an explicit yes, continue with [AGENT-SETUP.md](AGENT-SETUP.md) Step 2.

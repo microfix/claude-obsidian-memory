@@ -37,3 +37,13 @@ End with an overall assessment: "Memory is healthy" or "N critical things need f
 
 - Do NOT fix anything. Only report.
 - If the user says "fix it" afterwards, then make the corrections.
+
+## Archive structure check (if the `vault-organizer` skill is installed)
+
+If `<vault>/AI/SETUP-PROFILE.md` has `organize_level` 1 or 2, also run:
+
+```
+python3 "<vault>/Claude Code/skills/vault-organizer/scripts/vault.py" check --root "<vault>"
+```
+
+Report broken links, folders without `_index.md`, notes without frontmatter, orphans and sync-conflict copies. Offer to fix with `vault.py indexes --apply` (index files) and to ask the user about conflict copies. Never delete conflict copies yourself.

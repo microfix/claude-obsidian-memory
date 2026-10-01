@@ -12,7 +12,7 @@ Where the memory lives decides how it is installed. The interview ([INTERVIEW.md
 
 ## What every mode does the same way
 
-1. **Memory goes in a new `AI/` folder** beside the user's own files. Existing files are never moved, renamed, reformatted or deleted.
+1. **Memory goes in a new `AI/` folder** beside the user's own files. At organize level 0 existing files are never touched. Levels 1-2 (index files, frontmatter, and at level 2 moving files into a per-company structure) are done by the `vault-organizer` skill, only after the user approved a plan, with a backup and an undo journal. Files are never deleted.
 2. **Orientation pass (read-only)** for B-E when content exists. Claude lists the top-level folders, counts files per type, samples a few, and writes one map note: `AI/_index.md` section "Existing material" with one line per folder ("`Projects/`: 42 notes, customer projects"). This lets Claude find things later without reading everything. Ask before reading anything the user marked private.
 3. **Same rules and skills core**: `CLAUDE.md` bootstrap, `memory-guard`, `anydoc`, `defuddle`, `skill-builder`, `/compile`, `/audit`.
 4. `AI/SETUP-PROFILE.md` records the mode.
@@ -78,7 +78,7 @@ The user already has a folder of `.md` files in OneDrive and wants Claude to wor
 ./install.sh --vault "<path to the archive folder>" --yes --no-obsidian --skills-mode copy
 ```
 
-This adds only `AI/` and `Claude Code/` inside the archive. Then do the orientation pass, tuned for a large archive:
+This adds `AI/` and `Claude Code/` inside the archive. For **organize level 0** do the orientation pass below. For **level 1 or 2** (several companies, wants Obsidian on top, wants the archive as single source of truth) install with `--organized` and follow the `vault-organizer` skill instead. Orientation pass, tuned for a large archive:
 
 1. **Do not read everything.** Count files per folder (`find`), list the top two levels, read 5-10 representative notes.
 2. **Learn the archive's conventions** and write them into `AI/tools/archive-conventions.md`: filename pattern, language, frontmatter fields (if any), link style (`[[wikilinks]]` or `[text](file.md)`), date format, how projects/customers are separated. From then on, **new notes outside `AI/` follow those conventions**, not this system's defaults.

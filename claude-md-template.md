@@ -41,10 +41,20 @@ All memory lives in one folder of Markdown files (the vault) — shared across a
 7. **No "checking" talk:** Read files without announcing it. Just do it.
 8. **Commands:** `/compile` processes `raw/` inbox into correct files. `/audit` finds duplicates, outdated info, dead links, gaps.
 9. **Memory guard:** BEFORE writing anything to the vault (notes, logs, learnings, decisions) run the `memory-guard` skill's checks: no secrets, no unnecessary personal data, a `share:` level on new notes. Silent when clean.
-10. **Never reorganize the user's own files.** Existing notes and documents outside `AI/` are read-only unless the user asks for a change. Ask before deleting anything.
+10. **Never reorganize the user's own files on your own.** Existing notes and documents outside `AI/` are read-only unless the user asks for a change. The one exception is a reorganization the user has approved through the `vault-organizer` skill (plan shown, yes given, journaled, undoable). Never delete without asking.
 <!-- IF:OBSIDIAN -->
 11. **Obsidian Flavored Markdown:** When writing/editing `.md` files in the vault, use correct OFM syntax — wikilinks `[[Note]]`, embeds `![[file]]`, callouts `> [!type]`, frontmatter with `tags`/`aliases`, comments `%%hidden%%`, highlights `==text==`.
 <!-- ENDIF:OBSIDIAN -->
+
+<!-- IF:ORGANIZED -->
+## Single source of truth: the vault
+Everything about our companies, customers, projects, prices and processes lives in the vault at `<VAULT_PATH>`. It is the only source.
+- Companies: <!-- COMPANIES: filled in by the setup agent, e.g. "Company A, Company B" -->
+- To answer anything about a company: read `Home.md` → `Companies/<Company>/_index.md` → the folder's `_index.md` → the notes. Never answer company facts from memory or from this file.
+- If the vault and your memory disagree, the vault wins. If the vault has nothing, say so. Do not guess.
+- New facts go into the vault, in the right company folder, written with the `obsidian-markdown` skill (frontmatter `company`, `type`, `tags`, `share`), and the nearest `_index.md` is updated (`vault.py indexes --only <folder> --apply`).
+- Facts that apply to several companies go in `Shared/`. Unsure where something belongs: ask, or put it in `Inbox/`.
+<!-- ENDIF:ORGANIZED -->
 
 ## Skills
 - **Source of truth:** `<VAULT_PATH>/Claude Code/skills/<skill-name>/SKILL.md`

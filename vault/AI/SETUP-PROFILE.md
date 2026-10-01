@@ -20,6 +20,10 @@ existing_content: none  # none | markdown | obsidian | office-files | google-doc
 ai_folder_location: new # new = AI/ created next to existing files (default) | inside = user insisted on existing structure
 obsidian: yes           # yes | no | later
 
+organize_level: 0       # 0 only add AI/ | 1 indexes + frontmatter, no moves | 2 full: split by company, move files, fix links
+companies: []           # exact folder names, e.g. ["Company A", "Company B"]
+sensitive_folders: []   # folders that stay private (HR, salary, contracts, customer personal data)
+
 cloud: none             # none | icloud | onedrive | sharepoint | google-drive | dropbox | server
 cloud_connector: none   # none | microsoft-365 | google | both  (claude.ai connectors for mail, calendar, files)
 devices: 1              # number of computers
@@ -28,7 +32,7 @@ mobile: no
 shared_with: me         # me | few | team
 sensitive_data: none    # none | some | yes
 
-skill_packs: [core]     # core, obsidian, documents, microsoft-365, google, compliance, structure, code, builder
+skill_packs: [core]     # core, obsidian, documents, microsoft-365, google, compliance, structure, organize, code, builder
 skills_install: link    # link = symlinks into ~/.claude/skills | copy = real copies (cloud folders, Windows)
 ```
 

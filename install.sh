@@ -13,6 +13,7 @@ AUTO_YES=false
 USE_OBSIDIAN=true
 SKILLS_MODE=""          # link | copy (default: link, copy on Windows)
 EXTRA_SKILLS=""         # comma list, e.g. gdpr-check,icm-architect
+ORGANIZED=false         # --organized: archive is organized by company (adds vault-organizer + single-source-of-truth rules)
 
 print_usage() {
     echo "Usage: ./install.sh [OPTIONS]"
@@ -22,7 +23,8 @@ print_usage() {
     echo "  --yes               Auto-accept all prompts (non-interactive mode)"
     echo "  --no-obsidian       Plain Markdown folder: skip Obsidian install, Obsidian skills and rules"
     echo "  --skills-mode MODE  link (symlinks into the vault, default) or copy (cloud folders, Windows)"
-    echo "  --skills LIST       Extra skills, comma separated: gdpr-check,icm-architect"
+    echo "  --skills LIST       Extra skills, comma separated: gdpr-check,icm-architect,vault-organizer"
+    echo "  --organized         Archive will be organized by company: installs vault-organizer, adds the single-source-of-truth block to CLAUDE.md"
     echo "  --help              Show this help message"
     echo ""
     echo "Core skills (always): skill-builder, memory-guard, anydoc, defuddle"
@@ -44,6 +46,7 @@ while [[ $# -gt 0 ]]; do
         --no-obsidian) USE_OBSIDIAN=false; shift ;;
         --skills-mode) SKILLS_MODE="$2"; shift 2 ;;
         --skills) EXTRA_SKILLS="$2"; shift 2 ;;
+        --organized) ORGANIZED=true; shift ;;
         --help|-h) print_usage; exit 0 ;;
         *) echo -e "${RED}Unknown option: $1${NC}"; print_usage; exit 1 ;;
     esac
@@ -80,6 +83,9 @@ fi
 
 # Skill selection
 SKILLS=("skill-builder" "memory-guard" "anydoc" "defuddle")
+if [ "$ORGANIZED" = true ]; then
+    SKILLS+=("vault-organizer")
+fi
 if [ "$USE_OBSIDIAN" = true ]; then
     SKILLS+=("obsidian-markdown" "obsidian-bases" "obsidian-cli" "json-canvas")
 fi
@@ -87,6 +93,7 @@ if [ -n "$EXTRA_SKILLS" ]; then
     IFS=',' read -ra EXTRA <<< "$EXTRA_SKILLS"
     for s in "${EXTRA[@]}"; do
         s="$(echo "$s" | tr -d ' ')"
+        if [ "$s" = "vault-organizer" ] && [ "$ORGANIZED" = true ]; then continue; fi
         if [ -d "$SCRIPT_DIR/vault/Claude Code/skills/$s" ]; then
             SKILLS+=("$s")
         else
@@ -126,9 +133,8 @@ else
                 brew install --cask obsidian
                 echo -e "${GREEN}✓ Obsidian installed${NC}"
             else
-                echo -e "${RED}Homebrew not found. Install Obsidian manually from https://obsidian.md/${NC}"
-                echo "Then run this script again (or use --no-obsidian for a plain folder)."
-                exit 1
+                echo -e "${YELLOW}Homebrew not found, so Obsidian is not installed automatically.${NC}"
+                echo "  Download it from https://obsidian.md/ (free) and drag it to Applications. Continuing: the memory works without it."
             fi
         elif [ "$OS" = "Linux" ]; then
             if command -v snap &>/dev/null; then
@@ -140,9 +146,8 @@ else
                 flatpak install -y flathub md.obsidian.Obsidian
                 echo -e "${GREEN}✓ Obsidian installed via Flatpak${NC}"
             else
-                echo -e "${RED}No supported package manager found (snap/flatpak).${NC}"
-                echo "Install Obsidian manually from https://obsidian.md/ or use --no-obsidian."
-                exit 1
+                echo -e "${YELLOW}No supported package manager found (snap/flatpak).${NC}"
+                echo "  Install Obsidian from https://obsidian.md/ . Continuing: the memory works without it."
             fi
         else
             echo -e "${YELLOW}Cannot auto-install Obsidian on $OS. Install it from https://obsidian.md/${NC}"
@@ -299,15 +304,23 @@ echo -e "${YELLOW}Step 5: Setting up CLAUDE.md${NC}"
 render_claude_md() {
     local tmp
     tmp="$(mktemp)"
-    # Obsidian-only blocks: keep (drop marker lines) or remove entirely
+    # Conditional blocks: keep (drop marker lines) or remove entirely
+    cp "$SCRIPT_DIR/claude-md-template.md" "$tmp"
     if [ "$USE_OBSIDIAN" = true ]; then
-        sed -e '/<!-- IF:OBSIDIAN -->/d' -e '/<!-- ENDIF:OBSIDIAN -->/d' "$SCRIPT_DIR/claude-md-template.md" > "$tmp"
+        sed -i.bak -e '/<!-- IF:OBSIDIAN -->/d' -e '/<!-- ENDIF:OBSIDIAN -->/d' "$tmp"
     else
-        sed -e '/<!-- IF:OBSIDIAN -->/,/<!-- ENDIF:OBSIDIAN -->/d' "$SCRIPT_DIR/claude-md-template.md" > "$tmp"
+        sed -i.bak -e '/<!-- IF:OBSIDIAN -->/,/<!-- ENDIF:OBSIDIAN -->/d' "$tmp"
     fi
+    if [ "$ORGANIZED" = true ]; then
+        sed -i.bak -e '/<!-- IF:ORGANIZED -->/d' -e '/<!-- ENDIF:ORGANIZED -->/d' "$tmp"
+    else
+        sed -i.bak -e '/<!-- IF:ORGANIZED -->/,/<!-- ENDIF:ORGANIZED -->/d' "$tmp"
+    fi
+    rm -f "$tmp.bak"
     # Extra skill rows (awk, because the rows contain | characters)
     local extra=""
     case ",$EXTRA_SKILLS," in *,gdpr-check,*) extra="${extra}| Feature or flow touches personal data, login, cookies, tracking, consent | \`gdpr-check\` |"$'\n' ;; esac
+    if [ "$ORGANIZED" = true ]; then extra="${extra}| Organize, index or clean up an existing archive; split files by company | \`vault-organizer\` |"$'\n'; fi
     case ",$EXTRA_SKILLS," in *,icm-architect,*) extra="${extra}| Repeated multi-step flow, \"organize this for agents\", team knowledge base | \`icm-architect\` |"$'\n' ;; esac
     EXTRA_ROWS="$extra" VAULT="$VAULT_PATH" awk '
         /<!-- SKILLS:EXTRA -->/ { printf "%s", ENVIRON["EXTRA_ROWS"]; next }

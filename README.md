@@ -37,7 +37,7 @@ Claude asks (one question at a time, in your language): what you do, what you al
 | **D** Microsoft 365 | Word/Excel/PowerPoint in OneDrive, SharePoint, Teams | Memory in a synced folder + Microsoft 365 connector for mail, calendar, Teams |
 | **E** Google Drive | Drive, Docs, Sheets | Memory in a mirrored Drive folder + Google connectors |
 
-Setting this up for a customer on Mac + OneDrive with an existing Markdown archive? Hand the implementer [docs/GUIDE-ONEDRIVE-MAC.da.md](docs/GUIDE-ONEDRIVE-MAC.da.md) (Danish, step by step, for the Claude desktop app: open a session on the archive folder, paste the link, done).
+Setting this up for a customer on Mac + OneDrive with an existing archive, possibly several companies mixed together? Hand the implementer [docs/GUIDE-ONEDRIVE-MAC.da.md](docs/GUIDE-ONEDRIVE-MAC.da.md) (Danish, step by step, for the Claude desktop app: open a session on the archive folder, paste the link, done).
 
 The interview script is [INTERVIEW.md](INTERVIEW.md), the step-by-step for each mode is [docs/STORAGE-MODES.md](docs/STORAGE-MODES.md), and the agent's full instructions are [AGENT-SETUP.md](AGENT-SETUP.md).
 
@@ -71,7 +71,7 @@ The interview script is [INTERVIEW.md](INTERVIEW.md), the step-by-step for each 
 │  ├── skill-builder/  memory-guard/  anydoc/      │
 │  ├── defuddle/                                   │
 │  ├── obsidian-*/  json-canvas/  (Obsidian modes) │
-│  └── gdpr-check/  icm-architect/  (optional)     │
+│  └── gdpr-check/  icm-architect/  vault-organizer │
 └───────────────────┬─────────────────────────────┘
                     │
               Claude Code reads/writes
@@ -141,6 +141,7 @@ Where each skill comes from (full detail in [docs/SKILLS-CATALOG.md](docs/SKILLS
 | `anydoc` | Convert PDF, Word, Excel, PowerPoint, ODF, RTF, EPUB, CSV to clean markdown |
 | `gdpr-check` | GDPR audit of software and data flows, with article references (Danish report, not legal advice) |
 | `icm-architect` | Turn a process or a team's knowledge into a folder structure an agent can walk (MIT, Van Clief & McDermott) |
+| `vault-organizer` | Sort an existing archive into an Obsidian vault per company: index files, links, frontmatter, undo journal, and a CLAUDE.md that makes the vault the single source of truth |
 
 **Connectors** (claude.ai account): Microsoft 365 (Outlook, Teams, SharePoint), Gmail, Google Drive. Used by modes D and E.
 
