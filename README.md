@@ -37,7 +37,7 @@ Claude asks (one question at a time, in your language): what you do, what you al
 | **D** Microsoft 365 | Word/Excel/PowerPoint in OneDrive, SharePoint, Teams | Memory in a synced folder + Microsoft 365 connector for mail, calendar, Teams |
 | **E** Google Drive | Drive, Docs, Sheets | Memory in a mirrored Drive folder + Google connectors |
 
-Setting this up for a customer on Mac + OneDrive with an existing Markdown archive? Hand the implementer [docs/GUIDE-ONEDRIVE-MAC.da.md](docs/GUIDE-ONEDRIVE-MAC.da.md) (Danish, step by step).
+Setting this up for a customer on Mac + OneDrive with an existing Markdown archive? Hand the implementer [docs/GUIDE-ONEDRIVE-MAC.da.md](docs/GUIDE-ONEDRIVE-MAC.da.md) (Danish, step by step, for the Claude desktop app: open a session on the archive folder, paste the link, done).
 
 The interview script is [INTERVIEW.md](INTERVIEW.md), the step-by-step for each mode is [docs/STORAGE-MODES.md](docs/STORAGE-MODES.md), and the agent's full instructions are [AGENT-SETUP.md](AGENT-SETUP.md).
 

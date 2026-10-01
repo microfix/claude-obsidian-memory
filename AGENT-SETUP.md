@@ -9,6 +9,10 @@ The user's message will look something like:
 
 They may or may not name a folder. You do not need one yet: the interview finds it.
 
+**Folder from the session:** if the user named no folder, take the session's working directory (`pwd`) as the proposed `vault_path`, especially when it already holds `.md` files or an `.obsidian` folder. Confirm it in one line in the interview ("I'm in `<path>`, shall the memory live here?") before using it. If you run in the Claude desktop app, the user picked this folder when starting the session, so this is almost always right.
+
+**No terminal needed:** the user may only have pasted the GitHub link in the Claude app. Run the shell commands yourself. If you cannot run a shell, use Step 4b and the slash-command fallbacks in Step 4.
+
 ## Step 0: Get the repo
 
 ```bash
