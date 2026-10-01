@@ -6,7 +6,7 @@ Til den, der skal sætte det op hos kunden. Forudsætninger: en MacBook, Claude 
 
 1. **Find arkivmappen i Finder.** Typisk `~/Library/CloudStorage/OneDrive-<Firma>/…/<arkiv>`. Højreklik mappen → **Always Keep on This Device** (vent til OneDrive er færdig med at hente).
 2. **Claude Code installeret?** Åbn Terminal og skriv `claude --version`. Hvis det fejler: `curl -fsSL https://claude.ai/install.sh | bash`, og log ind med firmaets Claude Team-konto ved første `claude`.
-3. **Er det en sikker mappe at pege Claude på?** Spørg ejeren (Janus) om arkivet indeholder noget, der ikke må behandles af Claude: kundernes personoplysninger, løn, kontrakter. Notér mapperne. De bliver markeret som private i opsætningen.
+3. **Følsomme mapper:** Notér, hvilke mapper der indeholder personoplysninger, løn eller kontrakter. De bliver markeret som private i opsætningen. Brugen af Claude på arkivet er godkendt af ejeren.
 4. **Connector (valgfrit, kan vente):** Den, der administrerer Claude-kontoen, slår Microsoft 365-connectoren til under Admin settings → Connectors. Den giver adgang til mail, kalender, Teams og SharePoint-søgning. Selve arkivet kræver den ikke.
 5. **Tryk ikke "Tillad ikke":** første gang Claude rører mappen, spørger macOS om Terminal må tilgå filer i OneDrive. Svar **Tillad**.
 
@@ -60,5 +60,5 @@ Hver person kører opsætningen på sin egen Mac og peger på **den samme OneDri
 
 - At **intet** i det gamle arkiv er ændret (vis Finder).
 - At Claude skriver sin egen hukommelse i `AI/` og spørger, før den ændrer i kundens egne noter.
-- At indhold, der sendes til Claude, behandles af Anthropic efter deres Team-vilkår. Ejeren bør kende vilkårene, før kundedata peges ind.
+- At indhold, der sendes til Claude, behandles af Anthropic efter deres Team-vilkår.
 - At de kan sige "kør opsætningsinterviewet igen" for at ændre noget, og at hele mappen kan flyttes uden tab.
