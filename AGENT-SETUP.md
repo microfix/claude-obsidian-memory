@@ -1,130 +1,144 @@
-# AGENT-SETUP.md — Instructions for Claude (or any AI agent)
+# AGENT-SETUP.md: instructions for Claude (or any AI agent)
 
-> **You are an AI agent and someone gave you this repo URL plus a vault folder to use.**
-> This file is your complete instruction set. Follow it top to bottom. Ask the user only when a step explicitly says to.
+> **You are an AI agent and someone gave you this repo URL.**
+> This file is your complete instruction set. Follow it top to bottom. **Interview first, install second.** Ask the user only where a step says to.
 
 The user's message will look something like:
 
-> Set up the memory system from github.com/microfix/claude-obsidian-memory using folder `~/Documents/MyVault`
+> Set up the memory system from github.com/microfix/claude-obsidian-memory
 
-The folder they name is the **vault path** — referred to as `<VAULT_PATH>` below. If they didn't name a folder, ask for one before doing anything else.
+They may or may not name a folder. You do not need one yet: the interview finds it.
 
-## Step 1: Clone the repo
+## Step 0: Get the repo
 
 ```bash
 git clone https://github.com/microfix/claude-obsidian-memory.git /tmp/claude-obsidian-memory
 cd /tmp/claude-obsidian-memory
 ```
 
+If you have no shell access, read the files from the GitHub URL instead. Everything below still works, you just write the files by hand (Step 4b).
+
+## Step 1: Interview the user
+
+Read [INTERVIEW.md](INTERVIEW.md) and run it. It asks about language, what they do, what they already have (Markdown, Obsidian, Microsoft 365, Google Drive), where files live, whether they want Obsidian, devices, sharing and sensitive data. It ends with a plan the user must confirm.
+
+**Do not install, write or change anything before they say yes to the plan.**
+
+The interview gives you these decisions:
+
+| Decision | Values |
+|---|---|
+| `storage_mode` | A new Obsidian vault · B existing Obsidian vault · C plain Markdown folder · D Microsoft 365 · E Google Drive |
+| `vault_path` | folder that will contain `AI/` |
+| `obsidian` | yes / no / later |
+| `skills_install` | link / copy |
+| `skill_packs` | core + any of obsidian, documents, microsoft-365, google, compliance, structure, code, builder |
+| `shared_with`, `sensitive_data`, `language`, `style` | for `memory-guard`, tone and `AI/SETUP-PROFILE.md` |
+
+Mode details and the exact steps for cloud drives: [docs/STORAGE-MODES.md](docs/STORAGE-MODES.md). Read the section for the chosen mode before Step 2.
+
 ## Step 2: Run the installer
 
-The installer is idempotent and handles everything — Obsidian check, vault creation, file copies, symlinks, commands, CLAUDE.md:
+The installer is idempotent. It only adds `AI/` and `Claude Code/` to the folder, never touches the user's existing files, and merges instead of overwriting if `AI/` already exists.
 
-```bash
-./install.sh --vault "<VAULT_PATH>" --yes
-```
+| Mode | Command |
+|---|---|
+| A new vault, B existing vault | `./install.sh --vault "<VAULT_PATH>" --yes` |
+| C plain folder | `./install.sh --vault "<VAULT_PATH>" --yes --no-obsidian` |
+| D Microsoft 365, E Google Drive | `./install.sh --vault "<VAULT_PATH>" --yes --skills-mode copy` (add `--no-obsidian` if they don't want Obsidian) |
 
-**If install.sh succeeds, skip to Step 4.** If it fails (unsupported OS, no shell access, permissions), do the manual install in Step 3.
+Extra skills from the compliance and structure packs: append `--skills gdpr-check,icm-architect` (only the ones chosen).
 
-## Step 3: Manual install (fallback only)
+If the installer fails (unsupported OS, no shell, permissions), do the manual install in Step 4b.
 
-Create this exact structure:
+## Step 3: Existing material (modes B-E, when files already exist)
 
-**3a. Vault memory structure** — copy `vault/AI/` from the repo into `<VAULT_PATH>/AI/`:
+Do the **orientation pass** from [docs/STORAGE-MODES.md](docs/STORAGE-MODES.md): read-only, list top-level folders, count and sample, write the "Existing material" section in `AI/_index.md`. Do not move, rename, reformat or delete anything. Skip folders the user marked private.
+
+## Step 4: Anthropic's own skills and connectors (if the packs call for them)
+
+These are not copied into the repo, they come from the source. Details in [docs/SKILLS-CATALOG.md](docs/SKILLS-CATALOG.md).
+
+- **Documents pack** (Word, Excel, PowerPoint, PDF): in Claude Code run
+  ```
+  /plugin marketplace add anthropics/skills
+  /plugin install document-skills@anthropic-agent-skills
+  ```
+  Then run `/plugin` and confirm they show as installed. If a name has changed, follow <https://github.com/anthropics/skills>. If you cannot run slash commands yourself, tell the user to type them.
+- **Builder / Code packs:** `/plugin install example-skills@anthropic-agent-skills` (contains `skill-creator`, `frontend-design`).
+- **Microsoft 365 / Google packs:** these are claude.ai **connectors**. Tell the user to add them in Claude → Settings → Connectors and approve what they allow. You cannot do this for them. Explain what each connector can see before they approve.
+
+## Step 4b: Manual install (fallback only)
+
+Create this structure by hand:
 
 ```
 <VAULT_PATH>/AI/
-├── _index.md            # Master index — the entry point
+├── _index.md            # Master index, the entry point
+├── SETUP-PROFILE.md     # Filled from the interview
 ├── USER.md              # Facts about the user
-├── SOUL.md              # Agent personality
+├── SOUL.md              # Personality, tone, language
 ├── IDENTITY.md          # Agent self-identity
 ├── AGENTS.md            # Behavioral rules
 ├── BOOTSTRAP.md         # Startup context
 ├── SKILLS.md            # Skill inventory
-├── tools/_index.md      # Registry of the user's tools/services
+├── tools/_index.md
 ├── applied-learning/    # ALWAYS.md + _index.md
-├── decisions/_index.md  # Decision graph convention
-├── memory/              # Daily logs (empty at start)
+├── decisions/_index.md
+├── memory/              # Daily logs, empty at start
 └── raw/                 # Inbox for loose notes
 ```
 
-**3b. Skills** — copy `vault/Claude Code/` from the repo into `<VAULT_PATH>/Claude Code/`. The skills live in the vault (source of truth) so the user can edit and sync them in Obsidian.
+Copy `vault/AI/` for the files and `vault/Claude Code/skills/<name>` for each chosen skill into `<VAULT_PATH>/Claude Code/skills/`. Install skills into `~/.claude/skills/<name>`:
+symlinks in mode link, plain copies in mode copy or on native Windows. Copy `commands/*.md` to `~/.claude/commands/`.
 
-**3c. Symlinks** — Claude Code discovers skills in `~/.claude/skills/`, so symlink each one:
+## Step 5: CLAUDE.md, the bootstrap file
 
-```bash
-mkdir -p ~/.claude/skills
-for skill in skill-builder obsidian-markdown obsidian-bases obsidian-cli json-canvas anydoc defuddle; do
-  ln -sf "<VAULT_PATH>/Claude Code/skills/$skill" ~/.claude/skills/$skill
-done
-```
-
-On Windows (native, no symlink rights): copy the folders instead, and tell the user that skill edits in Obsidian won't propagate automatically.
-
-**3d. Commands** — copy `commands/*.md` to `~/.claude/commands/`.
-
-**3e. CLAUDE.md** — see Step 5.
-
-## Step 4: Optional CLI dependencies
-
-Two skills use external CLIs. Offer to install them (needs npm):
-
-```bash
-npm install -g @firecrawl/anydoc   # anydoc — document → markdown conversion
-npm install -g defuddle            # defuddle — web page → markdown extraction
-```
-
-If npm's global bin dir isn't on PATH (common on servers), note the path from `npm bin -g` and add an `export PATH=...` line to the user's shell profile.
-
-## Step 5: CLAUDE.md — the bootstrap file
-
-`CLAUDE.md` is the global instruction file Claude Code reads at every session start. It's what tells Claude that the memory system exists and where the vault is. **Without it, nothing else works.**
-
-**Where it lives:**
+`CLAUDE.md` is what makes Claude read the memory at the start of every session. **Without it, nothing else works.** The installer writes it from `claude-md-template.md` (Obsidian-only parts removed in mode C, extra skill rows added for the chosen packs).
 
 | Platform | Path |
-|----------|------|
+|---|---|
 | macOS / Linux | `~/.claude/CLAUDE.md` |
 | Windows (native) | `C:\Users\<name>\.claude\CLAUDE.md` |
 | Per-project alternative | `<project>/CLAUDE.md` (only applies inside that project) |
 
-**What must be in it:** take `claude-md-template.md` from this repo and replace every `<VAULT_PATH>` with the actual vault path:
+**If a CLAUDE.md already exists:** the installer asks, and keeps a `CLAUDE.md.bak`. If the user declines, do NOT overwrite. Read the existing file and merge in the missing sections (Memory, Rules, Skills, Documents). Preserve what the user wrote.
 
-```bash
-sed "s|<VAULT_PATH>|<VAULT_PATH>|g" claude-md-template.md > ~/.claude/CLAUDE.md
-```
+**If you cannot write to `~/.claude/` at all** (sandboxed, no filesystem access): output the fully rendered content in a code block, tell the user the exact path, and have them create the file.
 
-**If a CLAUDE.md already exists:** do NOT overwrite it. Read it, then merge in the missing sections from the template (Memory, Rules, Skills, Documents). Preserve the user's existing content.
+## Step 6: Fill in the profile
 
-**If you cannot write to `~/.claude/` at all** (sandboxed, no filesystem access): output the fully rendered CLAUDE.md content in a code block, tell the user the exact path where it must be saved (table above), and tell them to create the file there themselves.
+From the interview answers, write:
 
-## Step 6: Personalize
+1. `<VAULT_PATH>/AI/SETUP-PROFILE.md`: every field filled in (mode, paths, packs, flags). Delete none.
+2. `<VAULT_PATH>/AI/USER.md`: name, work, language, devices, preferences.
+3. `<VAULT_PATH>/AI/SOUL.md`: tone and language ("answer in Danish, short and direct", whatever they chose).
+4. `<VAULT_PATH>/AI/SKILLS.md`: tick the installed skills.
 
-Ask the user (or fill in from what you already know about them):
-
-1. `<VAULT_PATH>/AI/USER.md` — name, timezone, GitHub username, tech level, current projects
-2. `~/.claude/CLAUDE.md` "About Me" section — same facts, short form
-3. `<VAULT_PATH>/AI/SOUL.md` — language and tone preferences (e.g. "answer in Danish, short and direct")
+Run `memory-guard`'s checks on all four before writing: no secrets, no ID numbers.
 
 ## Step 7: Verify
 
-Run these checks and show the user the result:
+Show the user the result:
 
 ```bash
-ls "<VAULT_PATH>/AI/_index.md"                 # vault structure exists
-ls -la ~/.claude/skills/ | grep -c '\->'       # symlinks created (expect 7)
+ls "<VAULT_PATH>/AI/_index.md" "<VAULT_PATH>/AI/SETUP-PROFILE.md"
+ls ~/.claude/skills/                           # chosen skills present
 ls ~/.claude/commands/compile.md ~/.claude/commands/audit.md
-head -5 ~/.claude/CLAUDE.md                    # CLAUDE.md in place
-grep -c "<VAULT_PATH>" ~/.claude/CLAUDE.md     # must be 0 — no unreplaced placeholders
-anydoc --version 2>/dev/null || echo "anydoc not installed (optional)"
+head -5 ~/.claude/CLAUDE.md
+grep -c "<VAULT_PATH>" ~/.claude/CLAUDE.md     # must be 0, no unreplaced placeholders
+grep -E "storage_mode|sensitive_data|shared_with" "<VAULT_PATH>/AI/SETUP-PROFILE.md"
+anydoc --version 2>/dev/null || echo "anydoc not installed (optional, needs npm)"
 ```
 
-Then tell the user: **restart Claude Code** (new session) so CLAUDE.md is picked up. From the next session on, Claude reads its memory silently at start and writes to it as it works.
+Cloud modes: also check that a note you just created appears in the synced folder on the cloud side, and that `ls` on a file inside it shows real size (not a 0-byte placeholder).
 
-## What you just installed
+Then tell the user: **restart Claude Code** (new session) so CLAUDE.md is picked up. From the next session on, Claude reads its memory silently at the start and writes to it as it works. Offer to re-run the interview any time ("run the setup interview again").
 
-- **Persistent memory**: `AI/` in the vault — indexes, daily logs, applied learning, decision graph. The rules in CLAUDE.md make every future session read it at start and maintain it silently.
-- **7 skills** (in vault, symlinked): `skill-builder`, `obsidian-markdown`, `obsidian-bases`, `obsidian-cli`, `json-canvas`, `anydoc`, `defuddle`
-- **2 commands**: `/compile` (process the raw inbox), `/audit` (memory health check)
+## What you just set up
+
+- **Persistent memory** in `AI/`: indexes, daily logs, applied learning, decision graph, setup profile.
+- **Skills** from the packs the user chose. See [docs/SKILLS-CATALOG.md](docs/SKILLS-CATALOG.md) for which come from Anthropic, which from the Obsidian community and which are included here.
+- **2 commands**: `/compile` (process the raw inbox), `/audit` (memory health check).
 
 Full documentation: [README.md](README.md)

@@ -6,19 +6,28 @@ tags:
 
 # Skills Overview
 
-All Claude Code skills installed in this system. Skills live in the vault under `Claude Code/skills/` and are symlinked to `~/.claude/skills/`.
+All Claude Code skills installed in this system. Skills live in the vault under `Claude Code/skills/` and are linked (or, for cloud folders, copied) into `~/.claude/skills/`. See `SETUP-PROFILE.md` field `skills_install`.
 
 ## Installed Skills
 
-| Skill | Purpose | Trigger |
-|-------|---------|---------|
-| `skill-builder` | Create and improve Claude Code skills | "create a skill", "new skill", "improve skill" |
-| `obsidian-markdown` | Write correct Obsidian Flavored Markdown | Working with `.md` files, wikilinks, callouts, embeds |
-| `obsidian-bases` | Create `.base` files with views, filters, formulas | Working with `.base` files, database views |
-| `obsidian-cli` | Interact with running Obsidian via CLI | Vault operations, note management, plugin dev |
-| `json-canvas` | Create and edit `.canvas` files (mind maps, flowcharts) | Working with `.canvas` files, visual canvases |
-| `anydoc` | Convert documents (PDF, Word, Excel, PowerPoint...) to markdown | Any task needing the content of a binary document |
-| `defuddle` | Extract clean markdown from web pages | Reading URLs, web articles, documentation |
+Tick what the interview installed. Origin in brackets: **A** = Anthropic, **O** = Obsidian community, **H** = included in the memory-system repo.
+
+| Skill | Origin | Purpose | Trigger |
+|-------|--------|---------|---------|
+| `skill-builder` | H | Create and improve Claude Code skills | "create a skill", "new skill", "improve skill" |
+| `memory-guard` | H | Pre-write gate: secrets, personal data, share level | Before any write to the vault, before committing vault files |
+| `anydoc` | H | Convert documents (PDF, Word, Excel, PowerPoint...) to markdown | Any task needing the content of a binary document |
+| `defuddle` | O | Extract clean markdown from web pages | Reading URLs, web articles, documentation |
+| `obsidian-markdown` | O | Write correct Obsidian Flavored Markdown | Working with `.md` files, wikilinks, callouts, embeds |
+| `obsidian-bases` | O | Create `.base` files with views, filters, formulas | Working with `.base` files, database views |
+| `obsidian-cli` | O | Interact with running Obsidian via CLI | Vault operations, note management, plugin dev |
+| `json-canvas` | O | Create and edit `.canvas` files (mind maps, flowcharts) | Working with `.canvas` files, visual canvases |
+| `gdpr-check` | H | GDPR audit of software and data flows | Personal data, cookies, tracking, consent, login |
+| `icm-architect` | H | Turn a process or team knowledge into an agent-walkable folder structure | "organize this for agents", repeated multi-step flows |
+| `docx` `xlsx` `pptx` `pdf` | A | Create and edit Office files and PDFs | Word, Excel, PowerPoint, PDF as input or output |
+| `skill-creator` `frontend-design` | A | Build and test skills; distinctive web UI | New skill; new web UI |
+
+Anthropic skills are installed with `/plugin marketplace add anthropics/skills`. Details: the repo's `docs/SKILLS-CATALOG.md`.
 
 ## Adding Skills
 

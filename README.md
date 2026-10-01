@@ -21,6 +21,26 @@ Claude Code is powerful but forgetful. Every new session starts from zero — yo
 - **Maintenance commands** — `/compile` to process raw notes, `/audit` to find issues
 - **Daily logs** — automatic session logging for full history
 
+## Set up in one message: the Claude interview
+
+Paste one line into Claude Code. Claude interviews you, then builds the right setup for you. Nothing is installed before you approve the plan.
+
+> Set up the memory system from github.com/microfix/claude-obsidian-memory
+
+Claude asks (one question at a time, in your language): what you do, what you already have, where your files live, whether you want Obsidian, how many devices, whether it is shared, and whether you handle personal data. Then it picks one of five storage modes and the matching skills:
+
+| Mode | You have | Result |
+|---|---|---|
+| **A** New Obsidian vault | Nothing yet | Fresh vault, Obsidian installed if missing |
+| **B** Existing Obsidian vault | A vault | `AI/` memory added next to your notes, nothing moved |
+| **C** Plain Markdown folder | `.md` files, no Obsidian (or you don't want it) | Same memory, no Obsidian parts |
+| **D** Microsoft 365 | Word/Excel/PowerPoint in OneDrive, SharePoint, Teams | Memory in a synced folder + Microsoft 365 connector for mail, calendar, Teams |
+| **E** Google Drive | Drive, Docs, Sheets | Memory in a mirrored Drive folder + Google connectors |
+
+The interview script is [INTERVIEW.md](INTERVIEW.md), the step-by-step for each mode is [docs/STORAGE-MODES.md](docs/STORAGE-MODES.md), and the agent's full instructions are [AGENT-SETUP.md](AGENT-SETUP.md).
+
+---
+
 ## How It Works
 
 ```
@@ -33,6 +53,7 @@ Claude Code is powerful but forgetful. Every new session starts from zero — yo
 │  ├── SOUL.md           ← Agent personality       │
 │  ├── AGENTS.md         ← Behavioral rules        │
 │  ├── BOOTSTRAP.md      ← Startup context         │
+│  ├── SETUP-PROFILE.md  ← Interview answers       │
 │  ├── SKILLS.md         ← Skill inventory         │
 │  ├── tools/            ← Setup & service docs     │
 │  │   └── _index.md     ← Tools registry          │
@@ -45,13 +66,10 @@ Claude Code is powerful but forgetful. Every new session starts from zero — yo
 │  └── raw/              ← Inbox for loose notes    │
 │                                                 │
 │  Claude Code/skills/   ← Skill definitions       │
-│  ├── skill-builder/                              │
-│  ├── obsidian-markdown/                          │
-│  ├── obsidian-bases/                             │
-│  ├── obsidian-cli/                               │
-│  ├── json-canvas/                                │
-│  ├── anydoc/                                     │
-│  └── defuddle/                                   │
+│  ├── skill-builder/  memory-guard/  anydoc/      │
+│  ├── defuddle/                                   │
+│  ├── obsidian-*/  json-canvas/  (Obsidian modes) │
+│  └── gdpr-check/  icm-architect/  (optional)     │
 └───────────────────┬─────────────────────────────┘
                     │
               Claude Code reads/writes
@@ -76,24 +94,53 @@ At every session start, Claude Code:
 
 | Component | Description |
 |-----------|-------------|
-| **Vault template** | Pre-structured Obsidian vault with AI memory architecture |
-| **CLAUDE.md** | Global instructions that teach Claude how to use the vault |
-| **7 skills** | Skill builder, Obsidian Markdown, Obsidian Bases, Obsidian CLI, JSON Canvas, anydoc, Defuddle |
+| **Onboarding interview** | `INTERVIEW.md`: Claude asks 11 short questions and builds your setup from the answers |
+| **Five storage modes** | New or existing Obsidian vault, plain Markdown folder, Microsoft 365, Google Drive |
+| **Vault template** | Pre-structured memory (`AI/`) with a `SETUP-PROFILE.md` that records your choices |
+| **CLAUDE.md** | Global instructions that teach Claude how to use the memory, with a skill routing table |
+| **Skills** | Core, Obsidian, Compliance and Structure packs included. Anthropic's document skills installed from source |
 | **2 commands** | `/compile` (process raw notes) and `/audit` (find issues) |
-| **Install script** | One command to set up everything |
-| **AGENT-SETUP.md** | Instructions an AI agent can follow to install everything itself |
+| **Install script** | Flags for every mode: `--no-obsidian`, `--skills-mode copy`, `--skills gdpr-check,icm-architect` |
+| **AGENT-SETUP.md** | Instructions Claude follows to run the interview and install everything itself |
 
-### Skills Included
+### Skills
+
+Where each skill comes from (full detail in [docs/SKILLS-CATALOG.md](docs/SKILLS-CATALOG.md)):
+
+**Made by Anthropic** (installed from the source, not copied here)
 
 | Skill | Purpose |
 |-------|---------|
-| `skill-builder` | Create and improve new skills with proper structure |
+| `docx`, `xlsx`, `pptx`, `pdf` | Create and edit Word, Excel, PowerPoint and PDF files |
+| `skill-creator`, `frontend-design` | Build and test skills; distinctive web UI |
+| `/code-review`, `/simplify`, `/security-review`, `/loop`, `/schedule` | Built into Claude Code |
+
+```
+/plugin marketplace add anthropics/skills
+/plugin install document-skills@anthropic-agent-skills
+```
+
+**From the Obsidian community** (included, only installed when you use Obsidian)
+
+| Skill | Purpose |
+|-------|---------|
 | `obsidian-markdown` | Write correct Obsidian Flavored Markdown (wikilinks, callouts, embeds, properties) |
 | `obsidian-bases` | Create `.base` files (database-like views with filters and formulas) |
 | `obsidian-cli` | Interact with running Obsidian via CLI (read, create, search, manage notes) |
-| `json-canvas` | Create and edit `.canvas` files — mind maps, flowcharts, visual boards |
-| `anydoc` | Convert documents (PDF, Word, Excel, PowerPoint, ODF, RTF, EPUB, CSV) to clean markdown |
+| `json-canvas` | Create and edit `.canvas` files: mind maps, flowcharts, visual boards |
 | `defuddle` | Extract clean markdown from web pages (saves tokens vs raw HTML) |
+
+**Included here**
+
+| Skill | Purpose |
+|-------|---------|
+| `skill-builder` | Create and improve skills with proper structure |
+| `memory-guard` | Pre-write gate: blocks secrets, flags personal data, sets `share:` level on notes |
+| `anydoc` | Convert PDF, Word, Excel, PowerPoint, ODF, RTF, EPUB, CSV to clean markdown |
+| `gdpr-check` | GDPR audit of software and data flows, with article references (Danish report, not legal advice) |
+| `icm-architect` | Turn a process or a team's knowledge into a folder structure an agent can walk (MIT, Van Clief & McDermott) |
+
+**Connectors** (claude.ai account): Microsoft 365 (Outlook, Teams, SharePoint), Gmail, Google Drive. Used by modes D and E.
 
 ### Commands Included
 
@@ -204,13 +251,15 @@ claude
 
 ## Installation
 
-### Just Tell Claude Code (recommended)
+### Just tell Claude Code (recommended)
 
-If you already have Claude Code running, paste this — replacing the folder with where you want your vault:
+If you already have Claude Code running, paste this:
 
-> Set up the memory system from github.com/microfix/claude-obsidian-memory using folder `~/Documents/MyVault`. Follow AGENT-SETUP.md in the repo.
+> Set up the memory system from github.com/microfix/claude-obsidian-memory
 
-Claude Code clones the repo and follows [AGENT-SETUP.md](AGENT-SETUP.md) — a step-by-step instruction file written for AI agents. It creates the full file structure, symlinks the skills, and writes `~/.claude/CLAUDE.md` pointing at your vault. If it can't write CLAUDE.md (sandboxed environment), it tells you exactly where the file goes and what to put in it.
+Claude clones the repo, runs the interview in [INTERVIEW.md](INTERVIEW.md), shows you the plan, and only after your yes follows [AGENT-SETUP.md](AGENT-SETUP.md): it creates the structure, installs the skills you chose, and writes `~/.claude/CLAUDE.md` pointing at your memory folder. If it can't write CLAUDE.md (sandboxed environment), it tells you exactly where the file goes and what to put in it.
+
+You can also name the folder up front ("... using folder `~/Documents/MyVault`") and Claude skips that question.
 
 ### Quick Install (Terminal)
 
@@ -225,19 +274,30 @@ cd claude-obsidian-memory
 For scripting or when Claude Code runs it for you:
 
 ```bash
-./install.sh --vault ~/Documents/MyVault --yes
+./install.sh --vault ~/Documents/MyVault --yes                       # Obsidian vault (new or existing)
+./install.sh --vault ~/Notes --yes --no-obsidian                      # plain Markdown folder
+./install.sh --vault "$HOME/OneDrive/Claude-Memory" --yes \
+             --skills-mode copy --skills gdpr-check                   # cloud folder (OneDrive, Google Drive)
 ```
+
+| Flag | Meaning |
+|------|---------|
+| `--no-obsidian` | Skip Obsidian install, the four Obsidian skills and the Obsidian rules in CLAUDE.md |
+| `--skills-mode copy` | Copy skills into `~/.claude/skills/` instead of symlinking (cloud folders, native Windows; default on Windows) |
+| `--skills a,b` | Extra skills: `gdpr-check`, `icm-architect` |
 
 ### What the Installer Does
 
-1. **Installs Obsidian** if not found (via Homebrew on macOS, Snap/Flatpak on Linux)
-2. **Creates a vault** if the path doesn't exist (with proper `.obsidian` config)
-3. Copies the `AI/` memory structure into your vault
-4. Copies skills into your vault under `Claude Code/skills/`
-5. Creates symlinks from `~/.claude/skills/` to your vault
+1. **Installs Obsidian** if not found and wanted (Homebrew on macOS, Snap/Flatpak on Linux). Skipped with `--no-obsidian`
+2. **Creates the folder** if the path doesn't exist (with `.obsidian` config when Obsidian is used)
+3. **Adds** the `AI/` memory structure. If `AI/` exists, it merges and keeps your files. Nothing outside `AI/` and `Claude Code/` is touched
+4. Copies the chosen skills into the vault under `Claude Code/skills/`
+5. Links (or copies, with `--skills-mode copy`) the skills into `~/.claude/skills/`
 6. Installs `/compile` and `/audit` commands to `~/.claude/commands/`
-7. Generates `~/.claude/CLAUDE.md` with your vault path
+7. Generates `~/.claude/CLAUDE.md` with your folder path (keeps a `.bak` of an existing one)
 8. Optionally installs the `anydoc` CLI (document conversion) and `defuddle` CLI (web content extraction)
+
+Anthropic's document skills are installed separately (see Skills above).
 
 ### Manual Install
 
@@ -252,7 +312,7 @@ cp -r vault/Claude\ Code/ "/path/to/your/vault/Claude Code/"
 **2. Create skill symlinks:**
 ```bash
 mkdir -p ~/.claude/skills
-for skill in skill-builder obsidian-markdown obsidian-bases obsidian-cli json-canvas anydoc defuddle; do
+for skill in skill-builder memory-guard anydoc defuddle obsidian-markdown obsidian-bases obsidian-cli json-canvas; do
   ln -sf "/path/to/your/vault/Claude Code/skills/$skill" ~/.claude/skills/$skill
 done
 ```
@@ -274,6 +334,10 @@ Then edit `~/.claude/CLAUDE.md` and replace `<VAULT_PATH>` with your actual vaul
 ## Configuration
 
 After installation, personalize the system:
+
+### 0. Check `AI/SETUP-PROFILE.md`
+
+Written by the interview. It records your storage mode, folder, packs and flags like `sensitive_data`. Change it by asking Claude to "run the setup interview again".
 
 ### 1. Edit `AI/USER.md`
 
@@ -626,8 +690,17 @@ Yes. Point the vault path to wherever your vault is mounted. If using SSH, mount
 **Can I use this with other AI coding tools?**
 The vault structure and skills are Claude Code specific (uses `CLAUDE.md` and `~/.claude/skills/`). The Obsidian vault itself is just markdown — you could adapt the concept for other tools.
 
+**Do I have to use Obsidian?**
+No. Mode C is plain Markdown files in a folder. Claude does the reading and writing, so the memory works the same. Obsidian adds browsing, links and a graph for you as a human. You can open the folder in Obsidian later without migrating.
+
+**Can the memory live in OneDrive, SharePoint or Google Drive?**
+Yes, as a synced folder (modes D and E). Claude Code works on files on disk, so the cloud folder must be synced to the computer ("Always keep on this device" in OneDrive, "Mirror files" in Google Drive). Mail, calendar and Teams/Drive documents that are not synced are reached through the claude.ai connectors. Native Google Docs and Sheets are not files and are read through the connector. Details and warnings in [docs/STORAGE-MODES.md](docs/STORAGE-MODES.md).
+
+**Is it safe for customer or personal data?**
+The interview asks. With `sensitive_data: some|yes`, `memory-guard` runs strictly (no secrets, no ID numbers, `share:` level on every note) and `gdpr-check` is installed. Note that content you send to Claude is processed by Anthropic under the terms of your plan, and cloud folders also sit with Microsoft or Google. Check your own agreement and ask your data protection contact. This repo is not legal advice.
+
 **How much does it cost?**
-Nothing. Obsidian is free. Claude Code is the only cost, and this system *reduces* your token usage.
+Nothing extra. Obsidian itself is free to use. Claude Code is the only cost, and this system *reduces* your token usage.
 
 **Will Claude modify my vault?**
 Yes — that's the point. Claude writes to `memory/` logs, updates core files when relevant, and processes `raw/` inbox. It follows the rules in `AGENTS.md` and never deletes without asking.
