@@ -26,7 +26,7 @@ The company's single source of truth, an Obsidian vault. Everything about our co
 Use the `vault-keeper` skill for everything you read or write here. Short version: new information is a new note, one writer per file, every note has author, source and `status: unverified`, link it from the nearest `_index.md`, never delete.
 
 ## What never goes in
-Salaries and pay, HR cases, health information, CPR numbers, private addresses and phone numbers, bank details, passwords and keys. Everyone can read this archive. Refuse, say where it belongs instead, and tell <LIBRARIAN> if such material is already here.
+Salaries and pay, HR cases, health information, CPR numbers, private addresses and phone numbers, bank details, passwords and keys. Everyone can read this archive. Refuse, say where it belongs instead, and tell <LIBRARIAN> if such material is already here. People who handle such material have a separate restricted library that only they can open. Which ones exist: `AI/company/RESTRICTED.md` (names and owners, never content). If you need something that lives there, say "that is handled by <owner>, it is not in the shared archive".
 
 ## Systems of record
 Cases, hours, invoices and accounting live in other systems. See `AI/company/SYSTEMS.md`. Point to the system, never invent numbers.

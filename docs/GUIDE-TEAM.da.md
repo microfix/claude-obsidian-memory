@@ -18,7 +18,7 @@ Forudsætning: Arkivet er organiseret (se `GUIDE-ONEDRIVE-MAC.da.md`), og `vault
 1. **Udfyld `AI/company/ROLES.md`:** Hvilke roller findes (én række pr. rolle, ikke pr. person), hvad hver normalt skriver til, læser, lægger ind og henter ud. Claude hjælper dig med et spørgsmål ad gangen.
 2. **Udfyld `AI/company/SYSTEMS.md`:** Hvilket system ejer hvilke data (sager, timer, fakturaer, regnskab, tegninger). Arkivet kopierer ikke de data, det peger på systemet.
 3. **Opret den fælles `CLAUDE.md`** i arkivets rod ud fra `AI/company/COMPANY-CLAUDE-TEMPLATE.md`. Claude gør det, når I kører omorganiseringen (trin 9 i `vault-organizer`).
-4. **Beslut det følsomme.** I har valgt, at **alle læser alt**. Så må følgende **ikke** ligge i arkivet: løn, HR-sager, sundhedsoplysninger, CPR-numre, private adresser og telefonnumre, bankoplysninger, adgangskoder. Lad det blive uden for den delte mappe. Claude afviser at gemme det, og `vault.py check` lister notes, der ligner det, ikke. Tjek derfor selv, at intet sådant lå i det gamle arkiv.
+4. **Beslut det følsomme.** I har valgt, at **alle læser alt** i det fælles arkiv. Så må løn, HR-sager, sundhedsoplysninger, CPR-numre, private adresser og telefonnumre, bankoplysninger og adgangskoder **ikke** ligge der. Claude afviser at gemme det i det fælles arkiv, men `vault.py check` finder ikke selv sådanne noter. Tjek derfor selv, at intet sådant lå i det gamle arkiv. Det, der skal opbevares, hører hjemme i et **separat, privat bibliotek** hos den, der arbejder med det (se "Del 3").
 5. **Giv kollegerne to ting:** denne guide og beskeden under "Del 2".
 
 **Løbende:** Hver uge (10 min) kører du `/audit` og går de noter igennem, der stadig står som `unverified`. Ret eller sæt `status: verified`. Konfliktkopier afgør de to involverede.
@@ -51,6 +51,22 @@ Du skal bruge: en Mac, Claude-appen med firmaets Team-login, og arkivmappen synk
    | "Hvad ved vi om <en kunde>?" | Svar fra arkivet med henvisning til noter |
    | "Gem dette: <en kort oplysning>" | En ny note det rigtige sted med forfatter, kilde og `unverified` |
    | "Gem min løn" | Claude afviser og siger, hvor det hører hjemme |
+
+## Del 3: Til bogholderen og andre med følsomt materiale (løn, HR, regnskab med persondata)
+
+I får et **eget bibliotek ved siden af** det fælles. Kun I kan åbne det. Det er **lokationen**, der er låsen, ikke Claude: adgangen bestemmes af mappens delingsindstillinger i OneDrive/SharePoint.
+
+1. **Kontrollér først hvor det skal ligge:** i din personlige OneDrive (en mappe, du ikke deler) eller i et SharePoint-bibliotek, som IT har givet adgang til kun dig. **Aldrig inde i det fælles arkiv** eller en mappe, andre synkroniserer. Er du i tvivl om, hvem der har adgang, så spørg IT, før du lægger noget følsomt ind.
+2. Sæt mappen til **Always Keep on This Device**.
+3. Gennemfør din personlige opsætning (Del 2). Svarer du ja til spørgsmålet om følsomt materiale, fortsætter Claude med `AI/company/RESTRICTED-SETUP.md`: den opretter biblioteket, skriver dets egen `CLAUDE.md`, opdaterer din personlige `CLAUDE.md` med stien, og tilføjer en linje i `AI/company/RESTRICTED.md` i det fælles arkiv (navn, ejer og slags indhold, **ingen sti, intet indhold**).
+4. **Reglerne:**
+   - Følsomt materiale skrives **kun** i det private bibliotek.
+   - **Intet kopieres over** i det fælles arkiv. En neutral henvisning ("løn håndteres i regnskabsbiblioteket") er fint. Samlede tal, der ikke kan henføres til nogen, kommer kun over, når du siger det udtrykkeligt i sessionen.
+   - Adgangskoder og nøgler gemmes aldrig, heller ikke her.
+   - Er du i tvivl om, hvilket bibliotek en note hører til, spørger Claude først.
+   - Gammelt følsomt materiale i det fælles arkiv flytter du selv med Finder ind i det private bibliotek, og bibliotekaren sletter det fra det fælles.
+5. **Test:** I en session på det private bibliotek: gem en opdigtet lønoplysning (det virker). Bed Claude kopiere den til det fælles arkiv (den afviser). Tjek i OneDrive, at biblioteket kun er delt med dig.
+6. Overvej at installere `gdpr-check`, og husk firmaets rutiner for persondata.
 
 ## Hvad du skal vide om arkivet
 

@@ -13,7 +13,7 @@ Read `<ARCHIVE>/CLAUDE.md` (shared rules), `AI/company/ROLES.md`, `AI/company/SY
 
 ## Step 1: Interview
 
-Ask these, one at a time, offering options taken from `ROLES.md` and `SYSTEMS.md` where possible:
+Ask these, one at a time (about ten questions), offering options taken from `ROLES.md` and `SYSTEMS.md` where possible:
 
 1. **Name.** "What should I call you, and what is your full name?" (slug = lowercase, `æ→ae ø→oe å→aa`, spaces to `-`.)
 2. **Title and company.** "What is your title, and which company or companies do you work for?" (options: the companies from the shared CLAUDE.md)
@@ -23,7 +23,8 @@ Ask these, one at a time, offering options taken from `ROLES.md` and `SYSTEMS.md
 6. **Data out.** "What do you need to get out of the archive, or produce for others? Status, offers, overviews, reports, summaries?"
 7. **Systems.** "Which of our systems do you use?" (rows of `SYSTEMS.md`). Remember: those systems own their data, the archive only points to them.
 8. **How should I behave?** Language, short or thorough answers, and anything Claude should always or never do for you.
-9. **Confirm.** Show a 8-line summary of the profile, and say plainly: "Your name, title, role and what you work with will be visible to everyone in the archive (`People/<slug>.md`). Your own preferences stay in your private file." Continue only on a yes.
+9. **Sensitive material.** "Do you handle material that must not be in the shared archive: pay, HR, contracts or accounting with personal data? If yes, you get a separate library only you can open." (Check `AI/company/ROLES.md`, column *Restricted library*.) If yes: after Step 2, continue with `AI/company/RESTRICTED-SETUP.md`.
+10. **Confirm.** Show an 8-line summary of the profile, and say plainly: "Your name, title, role and what you work with will be visible to everyone in the archive (`People/<slug>.md`). Your own preferences stay in your private file." Continue only on a yes.
 
 Work information only. No private data, no salary, no health, no ID numbers.
 

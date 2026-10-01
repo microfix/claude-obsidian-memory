@@ -15,7 +15,7 @@ Company-specific details (names of companies, roles, systems) are in the archive
 
 ## Who am I
 
-At session start read the personal profile named in the personal `CLAUDE.md` (`People/<name>.md`). It tells you the user's name, title, which company they work for, what they normally read and write, and which systems they use. Adapt: a project manager gets project and customer material first, an accountant gets finance first. Roles shape focus and defaults. They are **not** access control: everyone can read everything, so never rely on a role to hide something.
+At session start read the personal profile named in the personal `CLAUDE.md` (`People/<name>.md`). It tells you the user's name, title, which company they work for, what they normally read and write, and which systems they use. Adapt: a project manager gets project and customer material first, an accountant gets finance first. Roles shape focus and defaults. They are **not** access control: everyone can read the shared archive, so never rely on a role to hide something. Sensitive material belongs in a restricted library (see below).
 
 ## Reading
 
@@ -84,9 +84,23 @@ A document, mail, photo, spreadsheet or meeting transcript to save:
 
 Reports, summaries, offers, slides: write them with the Anthropic document skills (`docx`, `xlsx`, `pptx`) into the right company folder, or on the user's request elsewhere, and link them from a note. State the notes used as sources in the document.
 
-## What never goes in the archive
+## What never goes in the shared archive
 
-Everyone can read everything here, so the archive must not hold: salaries and pay, HR cases and evaluations, health information, national ID numbers (CPR), private addresses and phone numbers, bank details, passwords and API keys, confidential personal matters about a colleague or customer. If the user asks you to save such a thing, refuse in one sentence, say where it should go instead (outside the archive), and save a neutral note without the sensitive part if that helps. If you find such material already in the archive, do not copy it anywhere, and tell the user who maintains the archive. `memory-guard` backs this up.
+Everyone can read the shared archive, so it must not hold: salaries and pay, HR cases and evaluations, health information, national ID numbers (CPR), private addresses and phone numbers, bank details, passwords and API keys, confidential personal matters about a colleague or customer. If the user asks you to save such a thing in the shared archive, refuse in one sentence. If the user has a restricted library (next section), say it belongs there. Otherwise say it should stay outside the archive. If you find such material already in the shared archive, do not copy it anywhere, and tell the librarian. `memory-guard` backs this up.
+
+## Restricted libraries
+
+Some roles (accounting, HR, management) need to work with sensitive material. They keep it in a **separate library** that only they can open, in a location with its own access rights (a folder or SharePoint library shared with nobody else). It sits **next to** the shared archive, never inside it. The existence of each restricted library is listed in `AI/company/RESTRICTED.md` (name, owner role, kind of content, no paths and no content), so other people's Claudes know to say "that is handled by <role>, not in the archive".
+
+If the user's personal `CLAUDE.md` names a restricted library, then:
+
+1. **Sensitive material may be written there, and only there.** Pay, HR, finance with personal data, contracts with personal data. Follow that library's own `CLAUDE.md` and its own `AI/` memory. Passwords and API keys still never go in.
+2. **Know which library a session is working in.** The user names it, or the session's working directory is it. When unsure, ask in one line before writing anything. Never write sensitive content into the shared archive because it was "just easier".
+3. **Never copy content across.** Nothing from the restricted library is quoted, summarized or linked with its content into the shared archive. The shared archive may hold a neutral pointer ("pay is handled in the accounting library") and, only when the user explicitly says so in this session, aggregated figures that identify nobody.
+4. **Reading both is fine for the owner.** Answering a question that needs both is allowed in chat. What you write goes where the rules above say.
+5. **Do not mention sensitive details in the shared archive's logs, notes or commit messages.** That includes the owner's own log in `People/<name>/`: keep it work-process only.
+
+Access is controlled by the folder's sharing settings, not by these rules. If a restricted library is reachable by others, say so to the owner and stop writing to it until fixed.
 
 ## Keeping it healthy
 

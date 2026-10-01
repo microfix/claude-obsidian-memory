@@ -31,9 +31,16 @@ Rendered by Claude during the personal setup interview into `~/.claude/CLAUDE.md
 - **Systems I use:** <from AI/company/SYSTEMS.md>
 - **My own log:** `<ARCHIVE_PATH>/People/<SLUG>/` (only I write there)
 
+## My restricted library (only if I have one)
+- **Library:** `<RESTRICTED_LIBRARY_PATH>` (<NAME>). Only I can open it. Read `<RESTRICTED_LIBRARY_PATH>/CLAUDE.md` when working there.
+- Sensitive material (<pay, HR, accounting with personal data>) is written **only** there, never in the shared archive.
+- Never copy content from it into the shared archive. A neutral pointer is fine. Aggregated figures only when I say so in the session.
+- Unsure which library a write belongs to: ask in one line first.
+<!-- Remove this whole section if I have no restricted library. -->
+
 ## Rules that apply in every folder
 - The archive is the only source for company facts. If it disagrees with your memory, the archive wins. If it has nothing, say so. Do not guess. Name the note you used.
 - New information is a new note with author, source and `status: unverified`. One writer per file. Never delete.
-- No salaries, HR matters, health, CPR numbers, private contact details, passwords or keys in the archive. Refuse and say where it belongs.
+- No salaries, HR matters, health, CPR numbers, private contact details, passwords or keys in the shared archive. Refuse and say where it belongs (my restricted library if I have one).
 - Cases, hours, invoices and accounting live in the systems of record: point there.
 - Documents: read with `anydoc`, never the raw binary.

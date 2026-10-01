@@ -56,7 +56,7 @@ Ask, one at a time:
 1. "Which companies does this archive cover?" Get the exact short names to use as folder names.
 2. For each existing top-level folder: which company does it belong to, or is it shared? Propose a mapping from folder names and from names found inside notes; let the user correct it.
 3. Who can read the archive? Record `access_model` in `AI/SETUP-PROFILE.md`: `all-read` (everyone with the folder reads everything) or `restricted` (sensitive folders live in a separately shared location).
-4. Which folders are sensitive (HR, salary, contracts, customer personal data)? With `all-read` they must **not** be moved into the archive: leave them where they are (outside the synced shared folder) or ask the librarian to move them out, and list them in the plan under "left out on purpose". With `restricted` they stay in their separately shared location and are not part of this archive either.
+4. Which folders are sensitive (HR, salary, contracts, customer personal data)? With `all-read` they must **not** be moved into the shared archive: leave them where they are or have their owner move them into a **restricted library** (see `AI/company/RESTRICTED-SETUP.md`), moved by hand in Finder, and list them in the plan under "left out on purpose". With `restricted` they stay in their separately shared location and are not part of this archive either.
 5. Who is the librarian (maintains the structure, `AI/company/` and the indexes)? Record `librarian`.
 
 Files that cannot be assigned go to `Inbox/` and are listed in the plan. If more than 15% would end up in Inbox, stop and ask for more guidance first.

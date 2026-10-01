@@ -19,6 +19,10 @@ The vault is long-lived and often synced (OneDrive, Google Drive, iCloud, git). 
    When unsure, use `private` and ask in one line.
 5. **Never lower a level silently.** A `private` note is never copied into a `team` or `public` area without the user saying so.
 
+## Restricted libraries
+
+If `AI/SETUP-PROFILE.md` of the target vault says `access_model: restricted` and `sensitive_data: yes`, the vault is a restricted library (for example accounting or HR, only one person can open it). There, personal data (pay, HR, ID numbers, health) is allowed, because that is its purpose. Secrets (passwords, keys, tokens) are still blocked. Nothing from a restricted library is written into any other vault. When a session touches two vaults, check which one the write goes to before applying these rules.
+
 ## Before a git commit or a share
 
 Scan the whole diff with the same rules. If the vault is a shared repo, only commit files with `share: team` or `share: public`. Refuse `--no-verify` and tell the user why in one sentence.
