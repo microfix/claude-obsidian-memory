@@ -30,6 +30,7 @@ If the field is missing, ask which level (explain in one sentence each; recommen
 │       └── <their own topic folders, kept as they were>/_index.md
 ├── Shared/                  # applies to several companies (group, templates, people)
 ├── Inbox/                   # files Claude could not place; the user decides
+├── People/                  # one profile per colleague, plus each person's own log folder
 ├── AI/                      # Claude's memory (never touched by this skill except AI/migration/)
 └── Claude Code/skills/
 ```
@@ -54,7 +55,9 @@ Ask, one at a time:
 
 1. "Which companies does this archive cover?" Get the exact short names to use as folder names.
 2. For each existing top-level folder: which company does it belong to, or is it shared? Propose a mapping from folder names and from names found inside notes; let the user correct it.
-3. Which folders are sensitive (HR, salary, contracts, customer personal data)? Record them in `AI/SETUP-PROFILE.md` notes. They stay `share: private`.
+3. Who can read the archive? Record `access_model` in `AI/SETUP-PROFILE.md`: `all-read` (everyone with the folder reads everything) or `restricted` (sensitive folders live in a separately shared location).
+4. Which folders are sensitive (HR, salary, contracts, customer personal data)? With `all-read` they must **not** be moved into the archive: leave them where they are (outside the synced shared folder) or ask the librarian to move them out, and list them in the plan under "left out on purpose". With `restricted` they stay in their separately shared location and are not part of this archive either.
+5. Who is the librarian (maintains the structure, `AI/company/` and the indexes)? Record `librarian`.
 
 Files that cannot be assigned go to `Inbox/` and are listed in the plan. If more than 15% would end up in Inbox, stop and ask for more guidance first.
 
@@ -71,11 +74,11 @@ Run `VAULT apply --root "<ROOT>" --plan AI/migration/plan.csv` (dry run) and sho
 ### 5. Frontmatter
 
 Agree a type map with the user (topic folder name → `type`, e.g. `Kunder: customer`, `Tilbud: offer`). Write it to `AI/migration/type-map.json`. Dry run then apply:
-`VAULT frontmatter --root "<ROOT>" --type-map AI/migration/type-map.json --apply`. It only **adds** missing keys (`company`, `type`, `tags: [company/<slug>]`, `share: private`) and never touches the note body or existing keys. At level 1 (no `Companies/` folder) tell the user that company tags need level 2, or add them by folder mapping.
+`VAULT frontmatter --root "<ROOT>" --type-map AI/migration/type-map.json --share team --apply` (use `--share private` for a single-user archive). It only **adds** missing keys (`company`, `type`, `tags: [company/<slug>]`, `share`) and never touches the note body or existing keys. At level 1 (no `Companies/` folder) tell the user that company tags need level 2, or add them by folder mapping.
 
 ### 6. Indexes
 
-`VAULT indexes --root "<ROOT>" --lang da --apply` creates `_index.md` in every folder (links to sub-indexes and notes with a one-line summary, files listed too) and `Home.md`. The generated block between `<!-- INDEX:AUTO -->` markers is rewritten on every run; text outside the markers is yours and is kept.
+`VAULT indexes --root "<ROOT>" --lang da --share team --apply` creates `_index.md` in every folder (links to sub-indexes and notes with a one-line summary, files listed too) and `Home.md`. The generated block between `<!-- INDEX:AUTO -->` markers is rewritten on every run; text outside the markers is yours and is kept.
 
 Then fill the **intro** line of each index by reading a few notes of that folder: 1-3 sentences, only what the notes support. Company hubs first (what the company is, what it does, where the key material is, who the key people are *if the notes say so*), then top-level topic folders. Never invent facts. For a big archive do the hubs and two levels now and tell the user the rest follows in later sessions. Optionally add `summary:` frontmatter to the most important notes; the index shows it.
 
@@ -97,26 +100,23 @@ Use the `obsidian-markdown` skill for every note you write or edit from now on. 
 
 ### 9. CLAUDE.md as "one true source" ✋
 
-1. Find every `CLAUDE.md` that applies: `~/.claude/CLAUDE.md`, `<ROOT>/CLAUDE.md`, parent folders of `<ROOT>`.
-2. Read them and sort the content into: **(a) behavior and rules** (keep), **(b) facts about companies, customers, prices, processes, people** (move into the right company notes with a source line, then replace by a pointer in CLAUDE.md), **(c) outdated or contradicting** (list for the user, do not decide), **(d) duplicates** of what the template already says (drop).
-3. Write the proposed new CLAUDE.md: slim, rules and pointers only, plus this block (fill the company list):
+Two layers, because several people use the archive:
 
-```markdown
-## Single source of truth: the vault
-Everything about our companies, customers, projects, prices and processes lives in the vault at `<ROOT>`. It is the only source.
-- Companies: <Company A>, <Company B>, ...
-- To answer anything about a company: read `Home.md` → `Companies/<Company>/_index.md` → the folder `_index.md` → the notes. Never answer company facts from memory or from this file.
-- If the vault and your memory disagree, the vault wins. If the vault has nothing, say so. Do not guess.
-- New facts go into the vault, in the right company folder, written with the `obsidian-markdown` skill (frontmatter `company`, `type`, `tags`, `share`), and the nearest `_index.md` is updated (`vault.py indexes --only <folder> --apply`).
-- Facts that apply to several companies go in `Shared/`. Unsure where something belongs: ask, or put it in `Inbox/`.
-```
+1. **Shared company file `<ROOT>/CLAUDE.md`** (read automatically in every session opened on the archive, by everyone). Render it from `<ROOT>/AI/company/COMPANY-CLAUDE-TEMPLATE.md`: companies, how to find things, writing rules (`vault-keeper`), what never goes in, systems of record, librarian. Rules and pointers only, no company facts.
+2. **Personal `~/.claude/CLAUDE.md`** of the person running this (the librarian): who they are, pointer to the shared file. Colleagues create theirs with `AI/company/PERSON-SETUP.md`.
 
-4. Back up the old file as `CLAUDE.md.bak-<date>`, show the user a short before/after summary, and only on a yes replace it. Run `/audit` afterwards.
+Steps:
+
+1. Find every existing `CLAUDE.md` that applies: `~/.claude/CLAUDE.md`, `<ROOT>/CLAUDE.md`, parent folders of `<ROOT>`.
+2. Read them and sort the content into: **(a) behavior and rules** (keep, in the right layer), **(b) facts about companies, customers, prices, processes, people** (move into the right company notes with a source line, then replace by a pointer), **(c) outdated or contradicting** (list for the user, do not decide), **(d) duplicates** of what the templates already say (drop).
+3. Fill in `AI/company/ROLES.md` and `AI/company/SYSTEMS.md` together with the user (one question at a time: which roles exist and what each normally writes and reads; which system owns which data). Create `People/_index.md` and the librarian's own `People/<slug>.md`.
+4. Write the proposed files. Back up any existing file as `CLAUDE.md.bak-<date>`, show a short before/after, and only on a yes replace it.
+5. Run `/audit`. Tell the librarian to hand the colleagues the team guide (`docs/GUIDE-TEAM.da.md` in the memory-system repo) and `AI/company/PERSON-SETUP.md`.
 
 ## Ongoing (every later session)
 
 - Read `Home.md` and the relevant company hub before answering company questions.
-- Put new information into the company folder, not in chat memory, and keep the `_index.md` files current.
+- Follow `vault-keeper` for every read and write in the archive: new information goes into the company folder as a new note with author, source and `status: unverified`, never in chat memory, and the `_index.md` files stay current.
 - Run `VAULT check --root "<ROOT>"` now and then (the `/audit` command does). New sync-conflict copies are listed for the user, never deleted.
 - Re-run `VAULT indexes --only <folder> --apply` after adding notes.
 

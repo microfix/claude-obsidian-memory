@@ -22,7 +22,9 @@ obsidian: yes           # yes | no | later
 
 organize_level: 0       # 0 only add AI/ | 1 indexes + frontmatter, no moves | 2 full: split by company, move files, fix links
 companies: []           # exact folder names, e.g. ["Company A", "Company B"]
-sensitive_folders: []   # folders that stay private (HR, salary, contracts, customer personal data)
+sensitive_folders: []   # HR, salary, contracts, personal data: kept OUT of a shared archive
+access_model: all-read  # all-read = everyone with the folder reads everything | restricted = sensitive material lives in a separately shared place
+librarian: ""           # who maintains structure, AI/company/ and the indexes
 
 cloud: none             # none | icloud | onedrive | sharepoint | google-drive | dropbox | server
 cloud_connector: none   # none | microsoft-365 | google | both  (claude.ai connectors for mail, calendar, files)

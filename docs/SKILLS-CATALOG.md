@@ -52,6 +52,7 @@ Only installed when Obsidian is used (modes A, B; optional in D, E). `defuddle` 
 | `anydoc` | Any document (PDF, Word, Excel, PowerPoint, ODF, RTF, EPUB, CSV) to Markdown before reading | Core | Needs `npm install -g @firecrawl/anydoc` |
 | `gdpr-check` | Audits software, flows and specs against GDPR with article references | Compliance | Danish-language report; includes the GDPR text and 2026 Digital Omnibus notes. Not legal advice |
 | `icm-architect` | Turns a process, team or body of knowledge into a folder structure an agent can walk | Structure | MIT licence, Van Clief and McDermott (Interpretable Context Methodology) |
+| `vault-keeper` | Company-wide rules for a shared archive with several writers: where things are found and filed, note format with author/source/`unverified`, one writer per file, what never goes in | Organize | Written for this system. Installed with `--organized` |
 | `vault-organizer` | Organizes an existing archive into an Obsidian vault split by company: index files, frontmatter, links, moves with hash check, undo journal, updates CLAUDE.md so the vault is the single source of truth | Organize | Written for this system; needs Python 3 (standard library only) |
 
 ## Picking packs from the interview

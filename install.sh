@@ -24,7 +24,7 @@ print_usage() {
     echo "  --no-obsidian       Plain Markdown folder: skip Obsidian install, Obsidian skills and rules"
     echo "  --skills-mode MODE  link (symlinks into the vault, default) or copy (cloud folders, Windows)"
     echo "  --skills LIST       Extra skills, comma separated: gdpr-check,icm-architect,vault-organizer"
-    echo "  --organized         Archive will be organized by company: installs vault-organizer, adds the single-source-of-truth block to CLAUDE.md"
+    echo "  --organized         Archive will be organized by company: installs vault-organizer + vault-keeper, adds the single-source-of-truth block to CLAUDE.md"
     echo "  --help              Show this help message"
     echo ""
     echo "Core skills (always): skill-builder, memory-guard, anydoc, defuddle"
@@ -84,7 +84,7 @@ fi
 # Skill selection
 SKILLS=("skill-builder" "memory-guard" "anydoc" "defuddle")
 if [ "$ORGANIZED" = true ]; then
-    SKILLS+=("vault-organizer")
+    SKILLS+=("vault-organizer" "vault-keeper")
 fi
 if [ "$USE_OBSIDIAN" = true ]; then
     SKILLS+=("obsidian-markdown" "obsidian-bases" "obsidian-cli" "json-canvas")
@@ -93,7 +93,7 @@ if [ -n "$EXTRA_SKILLS" ]; then
     IFS=',' read -ra EXTRA <<< "$EXTRA_SKILLS"
     for s in "${EXTRA[@]}"; do
         s="$(echo "$s" | tr -d ' ')"
-        if [ "$s" = "vault-organizer" ] && [ "$ORGANIZED" = true ]; then continue; fi
+        if { [ "$s" = "vault-organizer" ] || [ "$s" = "vault-keeper" ]; } && [ "$ORGANIZED" = true ]; then continue; fi
         if [ -d "$SCRIPT_DIR/vault/Claude Code/skills/$s" ]; then
             SKILLS+=("$s")
         else
@@ -320,7 +320,7 @@ render_claude_md() {
     # Extra skill rows (awk, because the rows contain | characters)
     local extra=""
     case ",$EXTRA_SKILLS," in *,gdpr-check,*) extra="${extra}| Feature or flow touches personal data, login, cookies, tracking, consent | \`gdpr-check\` |"$'\n' ;; esac
-    if [ "$ORGANIZED" = true ]; then extra="${extra}| Organize, index or clean up an existing archive; split files by company | \`vault-organizer\` |"$'\n'; fi
+    if [ "$ORGANIZED" = true ]; then extra="${extra}| Organize, index or clean up an existing archive; split files by company | \`vault-organizer\` |"$'\n'"| Read or write the shared company archive, save a document or note for the company | \`vault-keeper\` |"$'\n'; fi
     case ",$EXTRA_SKILLS," in *,icm-architect,*) extra="${extra}| Repeated multi-step flow, \"organize this for agents\", team knowledge base | \`icm-architect\` |"$'\n' ;; esac
     EXTRA_ROWS="$extra" VAULT="$VAULT_PATH" awk '
         /<!-- SKILLS:EXTRA -->/ { printf "%s", ENVIRON["EXTRA_ROWS"]; next }

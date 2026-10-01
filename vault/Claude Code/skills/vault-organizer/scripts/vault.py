@@ -319,8 +319,8 @@ def cmd_frontmatter(a):
 
 # ---------- indexes ----------
 A0, A1 = "<!-- INDEX:AUTO -->", "<!-- /INDEX:AUTO -->"
-L = {"da": dict(sub="Mapper", notes="Noter", files="Filer", count="noter", more="og {n} flere (se mappen)", intro="<!-- Skriv 1-3 sætninger: hvad ligger i denne mappe, og hvornår skal man kigge her? -->", home="Overblik over hele arkivet. Start her.", comps="Virksomheder", shared="Fælles for flere virksomheder", inbox="Ikke sorteret endnu", ai="Claudes hukommelse"),
-     "en": dict(sub="Folders", notes="Notes", files="Files", count="notes", more="and {n} more (see the folder)", intro="<!-- Write 1-3 sentences: what is in this folder and when to look here? -->", home="Overview of the whole archive. Start here.", comps="Companies", shared="Shared across companies", inbox="Not sorted yet", ai="Claude's memory")}
+L = {"da": dict(sub="Mapper", notes="Noter", files="Filer", count="noter", more="og {n} flere (se mappen)", intro="<!-- Skriv 1-3 sætninger: hvad ligger i denne mappe, og hvornår skal man kigge her? -->", home="Overblik over hele arkivet. Start her.", comps="Virksomheder", shared="Fælles for flere virksomheder", inbox="Ikke sorteret endnu", people="Hvem er hvem og hvad de arbejder med", ai="Claudes hukommelse"),
+     "en": dict(sub="Folders", notes="Notes", files="Files", count="notes", more="and {n} more (see the folder)", intro="<!-- Write 1-3 sentences: what is in this folder and when to look here? -->", home="Overview of the whole archive. Start here.", comps="Companies", shared="Shared across companies", inbox="Not sorted yet", people="Who is who and what they work on", ai="Claude's memory")}
 
 def summary_of(path):
     t = read(path); fm, bs = split_frontmatter(t)
@@ -407,7 +407,7 @@ def cmd_indexes(a):
             for c in sorted(os.listdir(cdir)):
                 if os.path.isdir(os.path.join(cdir, c)) and not c.startswith("."): hl.append(f"- [[Companies/{c}/_index|{c}]]")
             hl.append("")
-        extra = [("Shared", T["shared"]), ("Inbox", T["inbox"])]
+        extra = [("Shared", T["shared"]), ("Inbox", T["inbox"]), ("People", T["people"])]
         for n, label in extra:
             if n in top: hl.append(f"- [[{n}/_index|{n}]]: {label}")
         if os.path.isdir(os.path.join(root, "AI")): hl.append(f"- [[AI/_index|AI]]: {T['ai']}")
@@ -425,13 +425,18 @@ def cmd_indexes(a):
     print(f"{'created' if a.apply else 'would create'} {created} index files, {'updated' if a.apply else 'would update'} {updated}" + ("" if a.apply else "  (DRY RUN, add --apply)"))
 
 # ---------- check ----------
+def fm_date(fm):
+    m = re.search(r"^(?:created|updated)\s*:\s*(\d{4}-\d{2}-\d{2})", fm, re.M)
+    return m.group(1) if m else ""
+
 def cmd_check(a):
     root = os.path.abspath(a.root); idx = Index(root, all_files(root))
-    broken, amb, nofm, noidx, conflicts = [], [], [], [], []
+    broken, amb, nofm, noidx, conflicts, unver = [], [], [], [], [], []
     inbound = {r: 0 for r in idx.rels}
     for r in md_files(idx):
         t = read(os.path.join(root, r)); fm, bs = split_frontmatter(t)
         if fm is None and not r.endswith("_index.md"): nofm.append(r)
+        if fm and re.search(r"^status\s*:\s*unverified\s*$", fm, re.M): unver.append((fm_date(fm), r))
         for kind, m in extract_links(t):
             if kind == "wiki":
                 target = m.group(2).strip()
@@ -459,6 +464,8 @@ def cmd_check(a):
     print(f"notes without frontmatter: {len(nofm)}"); [print("  ", x) for x in nofm[:a.limit]]
     print(f"notes nobody links to (orphans): {len(orphans)}"); [print("  ", x) for x in orphans[:a.limit]]
     print(f"likely sync-conflict copies: {len(conflicts)}"); [print("  ", x) for x in conflicts[:a.limit]]
+    unver.sort()
+    print(f"notes still marked unverified (oldest first): {len(unver)}"); [print("  ", f"{d or '?'}  {r}") for d, r in unver[:a.limit]]
     if a.strict and (broken or noidx): sys.exit(1)
 
 # ---------- rollback ----------
