@@ -57,11 +57,35 @@ Same as A, minus Obsidian:
 5. Offer the Microsoft 365 connector: in Claude, Settings → Connectors → Microsoft 365. Explain what it can see before they approve. Mail and Teams content is personal data, so `memory-guard` applies when writing anything from it into notes.
 6. Obsidian is optional: it can open the synced folder as a vault. Obsidian plugins and `.obsidian/` settings will sync too, which is fine.
 
+**macOS specifics (OneDrive)**
+
+- Path: `~/Library/CloudStorage/OneDrive-<Company>/`. Folder names may contain spaces: always quote paths.
+- Finder → right-click the folder → **Always Keep on This Device**. In OneDrive settings, Files On-Demand can stay on; this setting makes the chosen folder real files.
+- First access: macOS may ask whether Terminal (or the app running Claude Code) may access files in the OneDrive folder. Answer **Allow**. If Claude says it cannot read the folder, check System Settings → Privacy & Security → Files and Folders (or Full Disk Access) for the terminal app.
+- Claude Team plan: the owner of the Claude organization can enable the Microsoft 365 connector for everyone (Admin settings → Connectors). Each user then signs in to Microsoft and approves it for themselves.
+
 **Warnings to say out loud**
 
 - Never store passwords or API keys in the folder. It is synced and may be shared.
 - Don't edit the same note on two machines at the same moment. OneDrive makes conflict copies (`note-DESKTOP-ABC.md`). `/audit` finds them.
 - Business accounts: the company's admin may block connectors or personal-data processing. The user should ask their IT or data protection contact before pointing Claude at mail or customer files.
+
+### Existing Markdown archive in OneDrive (typical handover case)
+
+The user already has a folder of `.md` files in OneDrive and wants Claude to work with it. Use mode D with `existing_content: markdown`, usually without Obsidian:
+
+```bash
+./install.sh --vault "<path to the archive folder>" --yes --no-obsidian --skills-mode copy
+```
+
+This adds only `AI/` and `Claude Code/` inside the archive. Then do the orientation pass, tuned for a large archive:
+
+1. **Do not read everything.** Count files per folder (`find`), list the top two levels, read 5-10 representative notes.
+2. **Learn the archive's conventions** and write them into `AI/tools/archive-conventions.md`: filename pattern, language, frontmatter fields (if any), link style (`[[wikilinks]]` or `[text](file.md)`), date format, how projects/customers are separated. From then on, **new notes outside `AI/` follow those conventions**, not this system's defaults.
+3. **Write the map** in `AI/_index.md` under "Existing material": one line per top-level folder with what it holds and roughly how many notes.
+4. **Ask before the first write outside `AI/`.** Default: all of Claude's own notes (logs, decisions, learnings) go in `AI/`; edits to the user's existing notes happen only when asked.
+5. **Mark sensitive folders** (customers, HR, finance, contracts) in `AI/SETUP-PROFILE.md` notes and keep them `share: private`; `memory-guard` applies.
+6. **Duplicates and conflict copies** (`name-MACBOOK.md`, `name 2.md`): list them for the user, never delete.
 
 ## Mode E: Google Drive
 

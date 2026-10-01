@@ -311,7 +311,9 @@ render_claude_md() {
     case ",$EXTRA_SKILLS," in *,icm-architect,*) extra="${extra}| Repeated multi-step flow, \"organize this for agents\", team knowledge base | \`icm-architect\` |"$'\n' ;; esac
     EXTRA_ROWS="$extra" VAULT="$VAULT_PATH" awk '
         /<!-- SKILLS:EXTRA -->/ { printf "%s", ENVIRON["EXTRA_ROWS"]; next }
-        { gsub(/<VAULT_PATH>/, ENVIRON["VAULT"]); print }
+        { line = $0; out = ""
+          while ((i = index(line, "<VAULT_PATH>")) > 0) { out = out substr(line, 1, i-1) ENVIRON["VAULT"]; line = substr(line, i+12) }
+          print out line }
     ' "$tmp"
     rm -f "$tmp"
 }
